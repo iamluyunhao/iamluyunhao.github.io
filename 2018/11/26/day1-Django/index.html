@@ -16,14 +16,11 @@
   
   
   
-    <meta name="description" content="一、MVC模式和MVT模式
-
-MVC模式
-
+    <meta name="description" content="一、MVC模式和MVT模式1.MVC模式
 Model(模型)：主要用于封装对数据层的访问View(视图)：用于封装结果，生成页面内容Controller(控制器)：用于接收请求，处理业务逻辑
 2.MVT模式Model(模型)：负责业务对象与数据库的对象View(视图)：负责业务逻辑，并在适当的时候调用Model和TemplateTemplate(模板)：负责如何把页面展示给用户
 
-二、搭建...">
+二、搭建虚...">
   
   <title>搭建Django项目 [ Jackhao的博客 ]</title>
   
@@ -128,22 +125,19 @@ Model(模型)：主要用于封装对数据层的访问View(视图)：用于封�
       
     </p>
     
-    <p>一、MVC模式和MVT模式</p>
-<ol>
-<li>MVC模式</li>
-</ol>
+    <p>一、MVC模式和MVT模式<br>1.MVC模式</p>
 <p>Model(模型)：主要用于封装对数据层的访问<br>View(视图)：用于封装结果，生成页面内容<br>Controller(控制器)：用于接收请求，处理业务逻辑</p>
 <p>2.MVT模式<br>Model(模型)：负责业务对象与数据库的对象<br>View(视图)：负责业务逻辑，并在适当的时候调用Model和Template<br>Template(模板)：负责如何把页面展示给用户</p>
 <hr>
-<p>二、搭建虚拟环境(virtualenv)<br>1.安装virtualenv<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install virtualenv</span><br></pre></td></tr></table></figure></p>
-<p>2.创建虚拟环境<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">virtualenv --no-site-packages 环境名</span><br><span class="line">virtualenv --no-site-packages -p Python安装路径\python.exe 环境名</span><br><span class="line"></span><br><span class="line">virtualenv --no-site-packages djenv</span><br></pre></td></tr></table></figure></p>
-<p>3.进入虚拟环境文件夹<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env&gt;cd djenv</span><br></pre></td></tr></table></figure></p>
-<p>4.进入scripts文件夹<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv&gt;cd scripts</span><br></pre></td></tr></table></figure></p>
-<p>5.激活虚拟环境<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;activate</span><br></pre></td></tr></table></figure></p>
-<p>6.列出安装包和版本信息<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;pip list</span><br><span class="line">E:\env\djenv\Scripts&gt;pip freeze</span><br></pre></td></tr></table></figure></p>
-<p>7.冻结虚拟环境<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;deactivate</span><br></pre></td></tr></table></figure></p>
+<p>二、搭建虚拟环境(virtualenv)<br>1.安装virtualenv<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install virtualenv</span><br></pre></td></tr></table></figure></p>
+<p>2.创建虚拟环境<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">virtualenv --no-site-packages 环境名</span><br><span class="line">virtualenv --no-site-packages -p Python安装路径\python.exe 环境名</span><br><span class="line"></span><br><span class="line">virtualenv --no-site-packages djenv</span><br></pre></td></tr></table></figure></p>
+<p>3.进入虚拟环境文件夹<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env&gt;cd djenv</span><br></pre></td></tr></table></figure></p>
+<p>4.进入scripts文件夹<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv&gt;cd scripts</span><br></pre></td></tr></table></figure></p>
+<p>5.激活虚拟环境<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;activate</span><br></pre></td></tr></table></figure></p>
+<p>6.列出安装包和版本信息<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;pip list</span><br><span class="line">E:\env\djenv\Scripts&gt;pip freeze</span><br></pre></td></tr></table></figure></p>
+<p>7.冻结虚拟环境<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;deactivate</span><br></pre></td></tr></table></figure></p>
 <hr>
-<p>三、安装Django和pymsql<br>1.安装Django<br><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;pip install django==1.11</span><br></pre></td></tr></table></figure></p>
+<p>三、安装Django和pymsql<br>1.安装Django<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\env\djenv\Scripts&gt;pip install django==<span class="number">1.11</span></span><br></pre></td></tr></table></figure></p>
 <p>2.安装pymysql<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pymysql</span><br></pre></td></tr></table></figure></p>
 <p>3.卸载Django<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip uninstall django</span><br></pre></td></tr></table></figure></p>
 <hr>
