@@ -1,0 +1,354 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、ORM(Object Relational Mapping):对象关系映射1.查询filter()===&gt; ‘select * from xxx’
+1模型名.objects.filter(xxx='abc')
+2.修改update()
+121.模型名.objects.update(xxx='abc')2.模型对象.save()
+3.删除delete()1模型对象.delete()
+...">
+  
+  <title>Django模型 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/11/26/day1-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        认识Django
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Django模型</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-11-27</span>
+      
+        <span id="post-title-updated">Updated at 2018-11-27</span>
+      
+      
+      
+    </p>
+    
+    <p>一、ORM(Object Relational Mapping):对象关系映射<br>1.查询filter()===&gt; ‘select * from xxx’</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">模型名.objects.filter(xxx=<span class="string">'abc'</span>)</span><br></pre></td></tr></table></figure>
+<p>2.修改update()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>模型名.objects.update(xxx=<span class="string">'abc'</span>)</span><br><span class="line"><span class="number">2.</span>模型对象.save()</span><br></pre></td></tr></table></figure>
+<p>3.删除delete()<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">模型对象.delete()</span><br></pre></td></tr></table></figure></p>
+<p>4.创建save()<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>模型名.objects.create(xxx=<span class="string">'111'</span>, yyy=<span class="string">'123'</span>)</span><br><span class="line"><span class="number">2.</span>模型对象.sava()</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、ORM定义<br>1.字段定义<br>|  字段  |                定义                 |<br>| :–: | :——————————-: |<br>| 字符串  |             CharField             |<br>|  整形  |           IntegerField            |<br>|  布尔  |           BooleanField            |<br>|  日期  | DateTimeField、DateField、TimeField |<br>|  自增  |             AutoField             |<br>|  图片  |            ImageField             |<br>2.约束定义<br>|  约束  |      定义      |<br>| :–: | :———-: |<br>| 是否唯一 |    unique    |<br>| 是否为空 |     null     |<br>| 默认值  |   default    |<br>| 默认时间 | auto_now_add |<br>| 修改时间 |   auto_now   |</p>
+<hr>
+<p>三、创建数据库模型<br>1.创建模型<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在models.py中创建模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">10</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    age = models.IntegerField(default=<span class="number">18</span>)</span><br><span class="line">    gender = models.BooleanField(default=<span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<p>2.添加应用<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置settings.py文件中的INSTALLED_APPS</span></span><br><span class="line">INSTALLED_APPS = [</span><br><span class="line">    <span class="string">'django.contrib.admin'</span>,</span><br><span class="line">    <span class="string">'django.contrib.auth'</span>,</span><br><span class="line">    <span class="string">'django.contrib.contenttypes'</span>,</span><br><span class="line">    <span class="string">'django.contrib.sessions'</span>,</span><br><span class="line">    <span class="string">'django.contrib.messages'</span>,</span><br><span class="line">    <span class="string">'django.contrib.staticfiles'</span>,</span><br><span class="line">    <span class="string">'app'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>3.生成迁移文件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py makemigrations</span><br></pre></td></tr></table></figure></p>
+<p>4.执行迁移文件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py migrate</span><br></pre></td></tr></table></figure></p>
+<p>5.添加模型字段<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># auto_now_add:创建数据时，默认create_time字段为当前时间</span></span><br><span class="line">create_time = models.DateTimeField(auto_now_add=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># auto_now:修改时间，每次update学生信息时，修改该字段的时间为当前时间</span></span><br><span class="line">operate_time = models.DateTimeField(auto_now=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
+<p>6.指定Student模型映射到数据库中时，对应的表名<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">    db_table = <span class="string">'student'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>四、操作数据库模型<br>1.修改urls.py配置文件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^admin/'</span>, admin.site.urls),</span><br><span class="line">    <span class="comment"># 访问Http://127.0.0.1:8080/add_stu/</span></span><br><span class="line">    url(<span class="string">r'^add_stu/'</span>, views.add_stu),</span><br><span class="line">    <span class="comment"># 访问Http://127.0.0.1:8080/del_stu/</span></span><br><span class="line">    url(<span class="string">r'^del_stu/'</span>, views.del_stu),</span><br><span class="line">    <span class="comment"># 访问Http://127.0.0.1:8080/up_stu/</span></span><br><span class="line">    url(<span class="string">r'^up_stu/'</span>, views.up_stu),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>2.向数据库中的student表插入数据<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponse</span><br><span class="line"></span><br><span class="line"><span class="comment"># 引入学生Student模型</span></span><br><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> Student</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_stu</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># 方法一：save()</span></span><br><span class="line">    <span class="comment"># stu = Student()</span></span><br><span class="line">    <span class="comment"># stu.name = '小明'</span></span><br><span class="line">    <span class="comment"># 向数据库中插入一条数据</span></span><br><span class="line">    <span class="comment"># stu.save()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 方法二：Student.objects.create()</span></span><br><span class="line">    Student.objects.create(name=<span class="string">'王大锤'</span>, age=<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'创建成功！'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>3.删除student表中的数据<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">del_stu</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># 先查询name='大锤'的对象，再做删除操作</span></span><br><span class="line">    <span class="comment"># 方法一：</span></span><br><span class="line">    <span class="comment"># Student.objects.filter(name='大锤').delete()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 方法二：</span></span><br><span class="line">    stu = Student.objects.filter(name=<span class="string">'大锤'</span>)</span><br><span class="line">    stu.delete()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'删除成功！'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>4.更新student表中的数据<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">up_stu</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># 更新student表中的数据</span></span><br><span class="line">    <span class="comment"># 方法一：</span></span><br><span class="line">    <span class="comment"># stus = Student.objects.filter(name='小明')</span></span><br><span class="line">    <span class="comment"># 获取小明对象</span></span><br><span class="line">    <span class="comment"># stu = stus[0]</span></span><br><span class="line">    <span class="comment"># stu.name = '大明'</span></span><br><span class="line">    <span class="comment"># stu.save()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 方法二：</span></span><br><span class="line">    <span class="comment"># 获取小明对象</span></span><br><span class="line">    <span class="comment"># stu = Student.objects.filter(name='小明').first()</span></span><br><span class="line">    <span class="comment"># stu.name = '大明'</span></span><br><span class="line">    <span class="comment"># stu.save()</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 方法三：</span></span><br><span class="line">    Student.objects.filter(name=<span class="string">'大明'</span>).update(name=<span class="string">'杰克'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'更新成功'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/11/26/day1-Django/" class="next">Next post 认识Django &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
