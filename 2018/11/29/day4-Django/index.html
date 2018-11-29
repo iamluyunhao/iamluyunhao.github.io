@@ -1,0 +1,357 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、一对一模型1.一对一模型关系：OneToOneField()OneToOneField字段定义在关联的任何一个模型中都可以OneToOneField等价于ForeignKey且约束unique=true12345class A:	name = CharField()class B:	a1 = OneToOneField(A)
+正向查询：已知B的对象b，查询A对象：b.a1反向查询：已知A...">
+  
+  <title>Django模型关系和模板 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/11/28/day3-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Django模型操作
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Django模型关系和模板</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-11-29</span>
+      
+        <span id="post-title-updated">Updated at 2018-11-29</span>
+      
+      
+      
+    </p>
+    
+    <p>一、一对一模型<br>1.一对一模型关系：OneToOneField()<br>OneToOneField字段定义在关联的任何一个模型中都可以<br>OneToOneField等价于ForeignKey且约束unique=true<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">	name = CharField()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>:</span></span><br><span class="line">	a1 = OneToOneField(A)</span><br></pre></td></tr></table></figure></p>
+<p>正向查询：已知B的对象b，查询A对象：b.a1<br>反向查询：已知A的对象a，查询B对象：a.b<br>2.定义一对一模型关系<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">10</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    age = models.IntegerField(default=<span class="number">18</span>)</span><br><span class="line">    gender = models.BooleanField(default=<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># auto_now_add:创建数据时，默认create_time字段为当前时间</span></span><br><span class="line">    create_time = models.DateTimeField(auto_now_add=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    <span class="comment"># auto_now:修改时间，每次update学生信息时，修改该字段的时间为当前时间</span></span><br><span class="line">    operate_time = models.DateTimeField(auto_now=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    chinese = models.DecimalField(max_digits=<span class="number">3</span>, decimal_places=<span class="number">1</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    math = models.DecimalField(max_digits=<span class="number">3</span>, decimal_places=<span class="number">1</span>, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    g = models.ForeignKey(Grade, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        <span class="comment"># 指定Student模型映射到数据库中时，对应的表名</span></span><br><span class="line">        db_table = <span class="string">'student'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StuInfo</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    phone = models.CharField(max_length=<span class="number">11</span>)</span><br><span class="line">    address = models.CharField(max_length=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">    stu = models.OneToOneField(Student)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'stu_info'</span></span><br></pre></td></tr></table></figure></p>
+<p>3.正向查询<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu_by_phone</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># 查询phone=13908771234的学生姓名</span></span><br><span class="line">    stu_info = StuInfo.objects.get(phone=<span class="string">'13908771234'</span>)</span><br><span class="line">    stu = stu_info.stu</span><br><span class="line">    name = stu.name</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> HttpResponse(name)</span><br></pre></td></tr></table></figure></p>
+<p>4.反向查询<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_info_by_stu</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># 查询杰克的电话号码</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    方法一：</span></span><br><span class="line"><span class="string">    stu = Student.objects.filter(name='杰克').first()</span></span><br><span class="line"><span class="string">    stu_info = StuInfo.objects.filter(stu_id=stu.id).first()</span></span><br><span class="line"><span class="string">    方法二：</span></span><br><span class="line"><span class="string">    stu_info = StuInfo.objects.filter(stu=stu).first()</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 方法三：</span></span><br><span class="line">    stu = Student.objects.filter(name=<span class="string">'杰克'</span>).first()</span><br><span class="line">    stu = stu.stuinfo</span><br><span class="line">    phone = stu.phone</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(phone)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、一对多模型<br>1.一对多模型关系：ForeignKey()<br>Foreignkey字段必须定义在多的一方<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">	name = CharField()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>:</span></span><br><span class="line">	a1 = ForeignKey(A)</span><br></pre></td></tr></table></figure></p>
+<p>正向查询：已知B的对象b，查询A对象：b.a1<br>反向查询：已知A的对象a，查询B对象：a.b_set<br>2.定义一对多模型关系<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">10</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    age = models.IntegerField(default=<span class="number">18</span>)</span><br><span class="line">    gender = models.BooleanField(default=<span class="number">1</span>)</span><br><span class="line">    create_time = models.DateTimeField(auto_now_add=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    operate_time = models.DateTimeField(auto_now=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    chinese = models.DecimalField(max_digits=<span class="number">3</span>, decimal_places=<span class="number">1</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    math = models.DecimalField(max_digits=<span class="number">3</span>, decimal_places=<span class="number">1</span>, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 指定学生和班级的关联关系</span></span><br><span class="line">    g = models.ForeignKey(Grade, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">    	db_table = <span class="string">'student'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Grade</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    g_name = models.CharField(max_length=<span class="number">10</span>)</span><br><span class="line">    create_time = models.DateTimeField(auto_now_add=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'grade'</span></span><br></pre></td></tr></table></figure></p>
+<p>3.正向查询<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_grade_by_stu</span><span class="params">(request)</span>:</span></span><br><span class="line">    stu = Student.objects.filter(name=<span class="string">'王大锤'</span>).first()</span><br><span class="line">    grade = stu.g</span><br><span class="line">    name = grade.g_name</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(name)</span><br></pre></td></tr></table></figure></p>
+<p>4.反向查询<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu_by_grade</span><span class="params">(request)</span>:</span></span><br><span class="line">   grade = Grade.objects.filter(g_name=<span class="string">'Java'</span>).first()</span><br><span class="line">   stus = grade.student_set.all()</span><br><span class="line">   names = []</span><br><span class="line">   <span class="keyword">for</span> stu <span class="keyword">in</span> stus:</span><br><span class="line">       names.append(stu.name)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> HttpResponse(names)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>三、多对多模型<br>1.多对多模型关系：ManyToManyField()<br>ManyToManyField字段定义在关联的任何一个模型中都可以<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">	name = CharField()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>:</span></span><br><span class="line">	a1 = ManyToManyField(A)</span><br></pre></td></tr></table></figure></p>
+<p>正向查询：已知B的对象b，查询A对象：b.a1<br>反向查询：已知A的对象a，查询B对象：a.b_set<br>2.定义多对多模型关系<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">10</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    age = models.IntegerField(default=<span class="number">18</span>)</span><br><span class="line">    gender = models.BooleanField(default=<span class="number">1</span>)</span><br><span class="line">    create_time = models.DateTimeField(auto_now_add=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    operate_time = models.DateTimeField(auto_now=<span class="keyword">True</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    chinese = models.DecimalField(max_digits=<span class="number">3</span>, decimal_places=<span class="number">1</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    math = models.DecimalField(max_digits=<span class="number">3</span>, decimal_places=<span class="number">1</span>, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    g = models.ForeignKey(Grade, null=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'student'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Course</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    c_name = models.CharField(max_length=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    stu = models.ManyToManyField(Student)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'course'</span></span><br></pre></td></tr></table></figure></p>
+<p>3.添加模型关系<br>添加学生和课程的关系<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_course</span><span class="params">(request)</span>:</span></span><br><span class="line">    stu = Student.objects.get(name=<span class="string">'小明'</span>)</span><br><span class="line">    course = Course.objects.get(c_name=<span class="string">'线代'</span>)</span><br><span class="line">    <span class="comment"># 给小明添加课程</span></span><br><span class="line">    <span class="comment"># stu.course_set.add(course)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'添加课程成功！'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>4.删除模型关系<br>删除学生和课程的关系<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_course</span><span class="params">(request)</span>:</span></span><br><span class="line">    stu = Student.objects.get(name=<span class="string">'小明'</span>)</span><br><span class="line">    course = Course.objects.get(c_name=<span class="string">'线代'</span>)</span><br><span class="line">    <span class="comment"># 删除小明的课程</span></span><br><span class="line">    <span class="comment"># stu.course_set.remove(course)</span></span><br><span class="line"></span><br><span class="line">     <span class="keyword">return</span> HttpResponse(<span class="string">'删除课程成功！'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>四、引入模板<br>1.在当前项目新建templates文件夹<br>2.修改setting.py配置文件<br>‘DIRS’: [os.path.join(BASE_DIR, ‘templates’)];<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">TEMPLATES = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">'BACKEND'</span>: <span class="string">'django.template.backends.django.DjangoTemplates'</span>,</span><br><span class="line">        <span class="string">'DIRS'</span>: [os.path.join(BASE_DIR, <span class="string">'templates'</span>)],</span><br><span class="line">        <span class="string">'APP_DIRS'</span>: <span class="keyword">True</span>,</span><br><span class="line">        <span class="string">'OPTIONS'</span>: &#123;</span><br><span class="line">            <span class="string">'context_processors'</span>: [</span><br><span class="line">                <span class="string">'django.template.context_processors.debug'</span>,</span><br><span class="line">                <span class="string">'django.template.context_processors.request'</span>,</span><br><span class="line">                <span class="string">'django.contrib.auth.context_processors.auth'</span>,</span><br><span class="line">                <span class="string">'django.contrib.messages.context_processors.messages'</span>,</span><br><span class="line">            ],</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>3.渲染页面<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(request)</span>:</span></span><br><span class="line">    stus = Student.objects.all()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render(request, <span class="string">'index.html'</span>, &#123;<span class="string">'students'</span>: stus&#125;)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>五、模板标签<br>1.解析变量<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; 变量 &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2.for表达式<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式1：</span></span><br><span class="line">    &#123;% <span class="keyword">for</span> 变量 <span class="keyword">in</span> 列表 %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% endfor %&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式2：</span></span><br><span class="line">    &#123;% <span class="keyword">for</span> 变量 <span class="keyword">in</span> 列表 %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% empty %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% endfor %&#125;</span><br><span class="line"><span class="comment">#注意：当列表为空或者不存在时，执行empty之后的语句</span></span><br></pre></td></tr></table></figure></p>
+<p>forloop的用法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; forloop.counter &#125;&#125; 表示当前是第几次循环，从<span class="number">1</span>开始</span><br><span class="line">&#123;&#123; forloop.counter0 &#125;&#125; 表示当前从第几次循环，从<span class="number">0</span>开始</span><br><span class="line">&#123;&#123;forloop.revcounter&#125;&#125;逆序表示当前是第几次循环，到<span class="number">1</span>停</span><br><span class="line">&#123;&#123;forloop.revcounter0&#125;&#125;逆序表示当前是第几次循环，到<span class="number">0</span>停</span><br><span class="line">&#123;&#123;forloop.first&#125;&#125;是否是第一个      布尔值：<span class="keyword">True</span>/<span class="keyword">False</span></span><br><span class="line">&#123;&#123;forloop.last&#125;&#125;是否是最后一个      布尔值：<span class="keyword">True</span>/<span class="keyword">False</span></span><br></pre></td></tr></table></figure></p>
+<p>3.if表达式<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式1：</span></span><br><span class="line">    &#123;% <span class="keyword">if</span> 表达式 %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;%  endif %&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式2：</span></span><br><span class="line">    &#123;% <span class="keyword">if</span> 表达式 %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% <span class="keyword">else</span> %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式3:</span></span><br><span class="line">    &#123;% <span class="keyword">if</span> 表达式 %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% <span class="keyword">elif</span> 表达式 %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% <span class="keyword">else</span> %&#125;</span><br><span class="line"></span><br><span class="line">    &#123;% endif %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>4.ifequal判断相等<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% ifequal value1 value2 %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% endifequal %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>5.extends模板继承<br>extends继承，写在开头位置<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% extends <span class="string">'父模板路径'</span> %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>6.block模板挖坑<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% block 关键字 %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>7.load static加载静态文件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% load static %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>8.comment注释<br>多行注释，注释不可见且不可运行<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% comment %&#125;</span><br><span class="line">    注释内容</span><br><span class="line">&#123;% endcomment %&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/11/28/day3-Django/" class="next">Next post Django模型操作 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
