@@ -1,0 +1,345 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、表单验证1.定义验证表单123456789from django import formsclass AddArtForm(forms.Form):    # required = True 表示必填项    # min_length 表示最小长度    title = forms.CharField(min_length=5, required=True)    desc = form...">
+  
+  <title>Django表单验证图片上传和分页技术 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/03/day6-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Django校验登录状态
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Django表单验证图片上传和分页技术</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-04</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-04</span>
+      
+      
+      
+    </p>
+    
+    <p>一、表单验证<br>1.定义验证表单<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django <span class="keyword">import</span> forms</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AddArtForm</span><span class="params">(forms.Form)</span>:</span></span><br><span class="line">    <span class="comment"># required = True 表示必填项</span></span><br><span class="line">    <span class="comment"># min_length 表示最小长度</span></span><br><span class="line">    title = forms.CharField(min_length=<span class="number">5</span>, required=<span class="keyword">True</span>)</span><br><span class="line">    desc = forms.CharField(min_length=<span class="number">20</span>, required=<span class="keyword">True</span>)</span><br><span class="line">    content = forms.CharField(required=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
+<p>2.使用表单验证<br>is_valid()：验证参数是否有效，如果参数验证成功返回True，否则返回False<br>from.errors：返回错误信息<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> article.Artform <span class="keyword">import</span> AddArtForm</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_art</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'add_article.html'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        <span class="comment"># 把提交的数据交给表单AddArtForm做验证</span></span><br><span class="line">        form = AddArtForm(request.POST)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> form.is_valid():</span><br><span class="line">            title = form.cleaned_data[<span class="string">'title'</span>]</span><br><span class="line">            desc = form.cleaned_data[<span class="string">'desc'</span>]</span><br><span class="line">            content = form.cleaned_data[<span class="string">'content'</span>]</span><br><span class="line">            Article.objects.create(title=title, desc=desc, content=content)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 创建文章成功后，返回文章列表页面</span></span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'art:art_list'</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 表示字段验证失败，需要将错误信息返回给页面展示</span></span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">'add_article.html'</span>, &#123;<span class="string">'form'</span>: form&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>3.反向解析<br>(1)修改urls.py配置文件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url, include</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^admin/'</span>, admin.site.urls),</span><br><span class="line">    url(<span class="string">r'^article/'</span>, include(<span class="string">'article.urls'</span>, namespace=<span class="string">'art'</span>))</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>(2)修改article.urls.py配置文件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> article <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    <span class="comment"># 创建文章</span></span><br><span class="line">    url(<span class="string">r'^add_art/'</span>, views.add_art, name=<span class="string">'add'</span>),</span><br><span class="line">    <span class="comment"># 文章列表</span></span><br><span class="line">    url(<span class="string">r'^art/'</span>, views.art, name=<span class="string">'art_list'</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>(3)url反向解析<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> reverse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_art</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'add_article.html'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        form = AddArtForm(request.POST)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> form.is_valid():</span><br><span class="line">            title = form.cleaned_data[<span class="string">'title'</span>]</span><br><span class="line">            desc = form.cleaned_data[<span class="string">'desc'</span>]</span><br><span class="line">            content = form.cleaned_data[<span class="string">'content'</span>]</span><br><span class="line">            Article.objects.create(title=title, desc=desc, content=content)</span><br><span class="line">            <span class="comment"># url反向解析</span></span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'art:art_list'</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">'add_article.html'</span>, &#123;<span class="string">'form'</span>: form&#125;)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、分页技术<br>1.Paginator分页技术<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.使用Paginator分页</span></span><br><span class="line">p = Paginator(需要分页的总数据，一页的条数)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.获取指定页码</span></span><br><span class="line">page = p.page(获取哪一页的页码)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.获取当前页</span></span><br><span class="line">page.number</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.获取当前有多少页</span></span><br><span class="line">page.p.num_pages</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.获取一共多少条数据</span></span><br><span class="line">page.p.count</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.获取页码范围</span></span><br><span class="line">page.p.page_range</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.是否存在上一页</span></span><br><span class="line">page.has_previous</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8.是否存在下一页</span></span><br><span class="line">page.has_next</span><br><span class="line"></span><br><span class="line"><span class="comment"># 9.获取上一页页码</span></span><br><span class="line">page.previous_page_number</span><br><span class="line"></span><br><span class="line"><span class="comment"># 10.获取下一页页码</span></span><br><span class="line">page.next_page_number</span><br></pre></td></tr></table></figure></p>
+<p>2.使用Paginator进行分页<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.core.paginator <span class="keyword">import</span> Paginator</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">art</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="comment"># 文章列表页面</span></span><br><span class="line">        page_num = int(request.GET.get(<span class="string">'page'</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 使用Paginator进行分页</span></span><br><span class="line">        articles = Article.objects.all()</span><br><span class="line">        <span class="comment"># 将所有数据按照每一页2条数据进行切块处理</span></span><br><span class="line">        paginator = Paginator(articles, <span class="number">2</span>)</span><br><span class="line">        <span class="comment"># 获取分页中的第几页数据</span></span><br><span class="line">        page = paginator.page(page_num)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'art.html'</span>, &#123;<span class="string">'page'</span>: page&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>3.使用切片进行分页<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">art</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="comment"># 文章列表页面</span></span><br><span class="line">        page_num = int(request.GET.get(<span class="string">'page'</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="comment"># 使用切片完成分页</span></span><br><span class="line">        articles = Article.objects.all()[(page<span class="number">-1</span>)*<span class="number">2</span>: page*<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'art.html'</span>, &#123;<span class="string">'page'</span>: page&#125;)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>三、图片上传<br>1.表单上传图片<br>注意：表单中必须有enctype=”multipart/form-data”<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=<span class="string">""</span> method=<span class="string">"post"</span> enctype=<span class="string">"multipart/form-data"</span>&gt;</span><br><span class="line">        &lt;p&gt;图片：&lt;input type="file" name="icon"&gt;&lt;/p&gt;</span><br><span class="line">        &lt;input type=<span class="string">"submit"</span> value=<span class="string">"提交"</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></p>
+<p>2.修改setting.py配置文件<br>MEDIA_URL = ‘/media/‘<br>MEDIA_ROOT = os.path.join(BASE_DIR, ‘media’)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 媒体文件media配置</span></span><br><span class="line">MEDIA_URL = <span class="string">'/media/'</span></span><br><span class="line">MEDIA_ROOT = os.path.join(BASE_DIR, <span class="string">'media'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>3.在工程目录的urls.py文件中配置解析media的路由<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.staticfiles.urls <span class="keyword">import</span> static</span><br><span class="line"><span class="keyword">from</span> day07.settings <span class="keyword">import</span> MEDIA_URL, MEDIA_ROOT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 告诉Django，解析media文件夹中的静态文件</span></span><br><span class="line">urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)</span><br></pre></td></tr></table></figure></p>
+<p>4.模型中定义保存图片的字段<br>models.ImageFiled(upload_to=’article’)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Article</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    title = models.CharField(max_length=<span class="number">100</span>)</span><br><span class="line">    desc = models.CharField(max_length=<span class="number">150</span>)</span><br><span class="line">    content = models.TextField()</span><br><span class="line">    icon = models.ImageField(upload_to=<span class="string">'article'</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    create_time = models.DateTimeField(auto_now_add=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        db_table = <span class="string">'article'</span></span><br></pre></td></tr></table></figure></p>
+<p>5.定义视图函数<br>获取图片:request.FILES<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_art</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'add_article.html'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        form = AddArtForm(request.POST, request.FILES)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> form.is_valid():</span><br><span class="line">            title = form.cleaned_data[<span class="string">'title'</span>]</span><br><span class="line">            desc = form.cleaned_data[<span class="string">'desc'</span>]</span><br><span class="line">            content = form.cleaned_data[<span class="string">'content'</span>]</span><br><span class="line">            icon = form.cleaned_data[<span class="string">'icon'</span>]</span><br><span class="line">            Article.objects.create(title=title, desc=desc, content=content, icon=icon)</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'art:art_list'</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">'add_article.html'</span>, &#123;<span class="string">'form'</span>: form&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>6.页面解析图片<br>页面解析图片<img src="/media/"><br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;% <span class="keyword">for</span> art <span class="keyword">in</span> page %&#125;</span><br><span class="line">	&lt;tr&gt;</span><br><span class="line">		&lt;td&gt;&#123;&#123; art.id &#125;&#125;&lt;/td&gt;</span><br><span class="line">		&lt;td&gt;&#123;&#123; art.title &#125;&#125;&lt;/td&gt;</span><br><span class="line">		&lt;td&gt;&#123;&#123; art.desc &#125;&#125;&lt;/td&gt;</span><br><span class="line">		&lt;td&gt;&#123;&#123; art.content &#125;&#125;&lt;/td&gt;</span><br><span class="line">		&lt;td&gt;&lt;img src="/media/&#123;&#123; art.icon &#125;&#125;" width=100px; height=100px&gt;&lt;/td&gt;</span><br><span class="line">	&lt;/tr&gt;</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/03/day6-Django/" class="next">Next post Django校验登录状态 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
