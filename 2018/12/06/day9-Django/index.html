@@ -1,0 +1,344 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、REST基础概念1.前言(1)REST是所有Web应用都应该遵守的架构设计指导原则。(2)REST:核心: 资源,状态转移,统一接口。资源: 是REST最明显的特征,是指对某类信息实体的抽象，资源是服务器上一个可命名的抽象概念，资源是以名词为核心来组织的，首先关注的是名词。
+状态转移: 是指客户端和服务端进行交互的过程中，客户端能够通过对资源的表述，实现操作资源的目的。
+统一接口: RE...">
+  
+  <title>Django中使用restful [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/05/day8-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Django添加删除功能、富文本编辑器和日志文件
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Django中使用restful</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-06</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-06</span>
+      
+      
+      
+    </p>
+    
+    <p>一、REST基础概念<br>1.前言<br>(1)REST是所有Web应用都应该遵守的架构设计指导原则。<br>(2)REST:核心: 资源,状态转移,统一接口。<br>资源: 是REST最明显的特征,是指对某类信息实体的抽象，资源是服务器上一个可命名的抽象概念，资源是以名词为核心来组织的，首先关注的是名词。</p>
+<p>状态转移: 是指客户端和服务端进行交互的过程中，客户端能够通过对资源的表述，实现操作资源的目的。</p>
+<p>统一接口: REST要求，必须通过统一的接口来对资源执行各种操作。</p>
+<p>2.http请求方式<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET（SELECT）：从服务器取出资源（一项或多项）</span><br><span class="line"></span><br><span class="line">POST（CREATE）：在服务器新建一个资源</span><br><span class="line"></span><br><span class="line">PUT（UPDATE）：在服务器更新资源（客户端提供改变后的完整资源）</span><br><span class="line"></span><br><span class="line">PATCH（UPDATE）：在服务器更新资源（客户端提供部分改变的属性）</span><br><span class="line"></span><br><span class="line">DELETE（DELETE）：从服务器删除资源</span><br></pre></td></tr></table></figure></p>
+<p>3.常用状态码<br>200 OK - [GET]：服务器成功返回用户请求的数据。<br>400 INVALID REQUEST - [POST/PUT/PATCH]：用户发出的请求有错误，服务器没有进行新建或修改数据的操作。<br>403 Forbidden - [<em>] 表示用户得到授权，但是访问是被禁止的。<br>404 NOT FOUND - [</em>]：用户发出的请求针对的是不存在的记录，服务器没有进行操作。<br>500 INTERNAL SERVER ERROR - [*]：服务器发生错误，用户将无法判断发出的请求是否成功。</p>
+<hr>
+<p>二、Django中使用restful<br>1.安装<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install djangorestframework==<span class="number">3.4</span><span class="number">.6</span></span><br><span class="line"></span><br><span class="line">pip install django-filter</span><br></pre></td></tr></table></figure></p>
+<p>2.修改setting.py配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = [</span><br><span class="line">    	...</span><br><span class="line"></span><br><span class="line">    &apos;rest_framework&apos;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>3.在应用app中定义路由<br>定义路由需要注意：<br>(1)使用router.register注册的url为资源，而且资源只能为名词不能为动词。<br>(2)定义的资源不要加’/‘斜杠，在访问地址的时候，URL中会默认的添加斜杠’/‘<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> rest_framework.routers <span class="keyword">import</span> SimpleRouter</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> article <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成路由对象</span></span><br><span class="line">router = SimpleRouter()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 路由管理资源art</span></span><br><span class="line">router.register(<span class="string">'art'</span>, views.ArticleView)</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line"></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成资源对应的路由地址</span></span><br><span class="line">urlpatterns += router.urls</span><br></pre></td></tr></table></figure></p>
+<p>4.在views.py文件中定义ArticleView类<br>(1)通过定义StudentView并继承了mixins的方法，即可有对应个增删改查的方法。<br>(2)在ArticleView中还定义了两个变量queryset和serializer_class。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> mixins, viewsets</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> article.article_serializer <span class="keyword">import</span> ArticleSerializer</span><br><span class="line"><span class="keyword">from</span> article.models <span class="keyword">import</span> Article</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(viewsets.GenericViewSet,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.ListModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.DestroyModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.CreateModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.UpdateModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.RetrieveModelMixin)</span>:</span></span><br><span class="line">    <span class="comment"># 查询返回的数据</span></span><br><span class="line">    queryset = Article.objects.all()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 序列化返回的文章数据</span></span><br><span class="line">    serializer_class = ArticleSerializer</span><br></pre></td></tr></table></figure></p>
+<p>5.定义序列化类<br>序列化类需要继承ModelSerializer，使用ModelSerializer表明序列化整个Article模型，并且可以指定序列化哪些字段。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> serializers</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> article.models <span class="keyword">import</span> Article</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleSerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        <span class="comment"># 序列化的模型</span></span><br><span class="line">        model = Article</span><br><span class="line">        <span class="comment"># 需要序列化的字段</span></span><br><span class="line">        fields = [<span class="string">'title'</span>, <span class="string">'desc'</span>, <span class="string">'content'</span>]</span><br></pre></td></tr></table></figure></p>
+<p>6.重构DestroyModelMixin类中的perform_destroy方法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> mixins, viewsets</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> article.article_serializer <span class="keyword">import</span> ArticleSerializer</span><br><span class="line"><span class="keyword">from</span> article.models <span class="keyword">import</span> Article</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(viewsets.GenericViewSet,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.ListModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.DestroyModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.CreateModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.UpdateModelMixin,</span></span></span><br><span class="line"><span class="class"><span class="params">                  mixins.RetrieveModelMixin)</span>:</span></span><br><span class="line">    <span class="comment"># 查询返回的数据</span></span><br><span class="line">    queryset = Article.objects.all().filter(is_delete=<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># 序列化返回的文章数据</span></span><br><span class="line">    serializer_class = ArticleSerializer</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">perform_destroy</span><span class="params">(self, instance)</span>:</span></span><br><span class="line">        instance.is_delete = <span class="number">1</span></span><br><span class="line">        instance.save()</span><br></pre></td></tr></table></figure></p>
+<p>7.使用Ajax请求后端数据<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">"UTF-8"</span>&gt;</span><br><span class="line">    &lt;title&gt;Title&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &#123;% csrf_token %&#125;</span><br><span class="line">    &lt;div id=<span class="string">"content"</span>&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">    &lt;script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"&gt;&lt;/script&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">           $.ajax(&#123;</span><br><span class="line">                url:<span class="string">'/api/article/art'</span>,</span><br><span class="line">                type: <span class="string">'GET'</span>,</span><br><span class="line">                dataType: <span class="string">'json'</span>,</span><br><span class="line">                success: function (data) &#123;</span><br><span class="line">                    <span class="keyword">for</span>(var i=<span class="number">0</span>; i&lt;data.length; i++)&#123;</span><br><span class="line">                        s = <span class="string">'&lt;p&gt;标题：'</span> + data[i].title + <span class="string">' 描述：'</span> + data[i].desc + <span class="string">' 内容：'</span></span><br><span class="line">                            + data[i].content + <span class="string">'&lt;a onclick="del_art('</span> + data[i].id + <span class="string">')"&gt;删除&lt;/a&gt;&lt;/p&gt;'</span></span><br><span class="line">                        $(<span class="string">'#content'</span>).append(s)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                error: function (data)&#123;</span><br><span class="line">                    alert(<span class="string">'失败'</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line"></span><br><span class="line">           function del_art(id)&#123;</span><br><span class="line">               var csrf = $(<span class="string">'input[name="csrfmiddlewaretoken"]'</span>).val()</span><br><span class="line">               $.ajax(&#123;</span><br><span class="line">                   url: <span class="string">'/api/article/art/'</span> + id +<span class="string">'/'</span>,</span><br><span class="line">                   type: <span class="string">'DELETE'</span>,</span><br><span class="line">                   headers: &#123;<span class="string">'X-CSRFToken'</span>: csrf&#125;,</span><br><span class="line">                   dataType: <span class="string">'json'</span>,</span><br><span class="line">                   success: function (data) &#123;</span><br><span class="line">                       location.href=<span class="string">'/api/article/list/'</span></span><br><span class="line">                   &#125;,</span><br><span class="line">                   error: function (data) &#123;</span><br><span class="line">                       alert(<span class="string">'删除失败！'</span>)</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;)</span><br><span class="line">           &#125;</span><br><span class="line">     &lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/05/day8-Django/" class="next">Next post Django添加删除功能、富文本编辑器和日志文件 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
