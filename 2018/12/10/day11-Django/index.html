@@ -1,0 +1,337 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、注册模块1.创建注册验证表单123456789101112131415161718192021222324252627282930313233343536373839404142from django import formsfrom user.models import Userclass UserRegisterForm(forms.Form):    user_name = for...">
+  
+  <title>天天生鲜项目-01 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/07/day10-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Django-restful使用指南
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>天天生鲜项目-01</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-10</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-10</span>
+      
+      
+      
+    </p>
+    
+    <p>一、注册模块<br>1.创建注册验证表单<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django <span class="keyword">import</span> forms</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> user.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserRegisterForm</span><span class="params">(forms.Form)</span>:</span></span><br><span class="line">    user_name = forms.CharField(max_length=<span class="number">20</span>, min_length=<span class="number">5</span>, required=<span class="keyword">True</span>,</span><br><span class="line">                                error_messages=&#123;</span><br><span class="line">                                    <span class="string">'required'</span>: <span class="string">'用户名必填'</span>,</span><br><span class="line">                                    <span class="string">'max_length'</span>: <span class="string">'用户名不能超过20位字符'</span>,</span><br><span class="line">                                    <span class="string">'min_length'</span>: <span class="string">'用户名不能少于5位字符'</span>,</span><br><span class="line">                                &#125;)</span><br><span class="line">    pwd = forms.CharField(max_length=<span class="number">20</span>, min_length=<span class="number">8</span>, required=<span class="keyword">True</span>,</span><br><span class="line">                          error_messages=&#123;</span><br><span class="line">                              <span class="string">'required'</span>: <span class="string">'密码必填'</span>,</span><br><span class="line">                              <span class="string">'max_length'</span>: <span class="string">'密码不能超过20位字符'</span>,</span><br><span class="line">                              <span class="string">'min_length'</span>: <span class="string">'密码不能少于8位字符'</span></span><br><span class="line">                          &#125;)</span><br><span class="line">    cpwd = forms.CharField(max_length=<span class="number">20</span>, min_length=<span class="number">8</span>, required=<span class="keyword">True</span>,</span><br><span class="line">                          error_messages=&#123;</span><br><span class="line">                              <span class="string">'required'</span>: <span class="string">'确认密码必填'</span>,</span><br><span class="line">                              <span class="string">'max_length'</span>: <span class="string">'密码不能超过20位字符'</span>,</span><br><span class="line">                              <span class="string">'min_length'</span>: <span class="string">'密码不能少于8位字符'</span></span><br><span class="line">                          &#125;)</span><br><span class="line">    email = forms.CharField(required=<span class="keyword">True</span>,</span><br><span class="line">                            error_messages=&#123;</span><br><span class="line">                                <span class="string">'required'</span>: <span class="string">'邮箱必填'</span></span><br><span class="line">                            &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 验证时，会自动调用</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clean</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 校验用户名是否已存在于数据库</span></span><br><span class="line">        user =User.objects.filter(username=self.cleaned_data.get(<span class="string">'user_name'</span>)).first()</span><br><span class="line">        <span class="keyword">if</span> user:</span><br><span class="line">            <span class="comment"># 用户已存在于数据库，抛出异常</span></span><br><span class="line">            <span class="keyword">raise</span> forms.ValidationError(&#123;<span class="string">'user_name'</span>: <span class="string">'该用户已存在'</span>&#125;)</span><br><span class="line">        <span class="comment"># 校验密码是否相等</span></span><br><span class="line">        pwd = self.cleaned_data.get(<span class="string">'pwd'</span>)</span><br><span class="line">        cpwd = self.cleaned_data.get(<span class="string">'cpwd'</span>)</span><br><span class="line">        <span class="keyword">if</span> pwd != cpwd:</span><br><span class="line">            <span class="keyword">raise</span> forms.ValidationError(&#123;<span class="string">'pwd'</span>: <span class="string">'两次密码不一致'</span>&#125;)</span><br><span class="line">        <span class="keyword">return</span> self.cleaned_data</span><br></pre></td></tr></table></figure></p>
+<p>2.注册功能<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth.hashers <span class="keyword">import</span> make_password, check_password</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponseRedirect</span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> reverse</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> user.forms <span class="keyword">import</span> UserRegisterForm, UserLoginForm</span><br><span class="line"><span class="keyword">from</span> user.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'register.html'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        <span class="comment"># 使用表单做验证</span></span><br><span class="line">        form = UserRegisterForm(request.POST)</span><br><span class="line">        <span class="keyword">if</span> form.is_valid():</span><br><span class="line">            <span class="comment"># 字段验证成功，注册用户名不存在于数据库，密码和确认密码是一致的</span></span><br><span class="line">            username = form.cleaned_data[<span class="string">'user_name'</span>]</span><br><span class="line">            password = form.cleaned_data[<span class="string">'pwd'</span>]</span><br><span class="line">            email = form.cleaned_data[<span class="string">'email'</span>]</span><br><span class="line">            <span class="comment"># 密码加密：make_password()</span></span><br><span class="line">            <span class="comment"># from django.contrib.auth.hashers import make_password</span></span><br><span class="line">            new_password = make_password(password)</span><br><span class="line">            User.objects.create(username=username, password=new_password, email=email)</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'user:login'</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 字段验证不成功，将验证失败的信息返回给页面</span></span><br><span class="line">            errors = form.errors</span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">'register.html'</span>, &#123;<span class="string">'errors'</span>: errors&#125;)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、登录模块<br>1.创建登录验证表单<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserLoginForm</span><span class="params">(forms.Form)</span>:</span></span><br><span class="line">    username = forms.CharField(required=<span class="keyword">True</span>,</span><br><span class="line">                               error_messages=&#123;</span><br><span class="line">                                   <span class="string">'required'</span>: <span class="string">'用户名必填'</span>,</span><br><span class="line">                               &#125;)</span><br><span class="line">    pwd = forms.CharField(required=<span class="keyword">True</span>,</span><br><span class="line">                          error_messages=&#123;</span><br><span class="line">                              <span class="string">'required'</span>: <span class="string">'密码必填'</span>,</span><br><span class="line">                          &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>2.登录功能<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth.hashers <span class="keyword">import</span> make_password, check_password</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponseRedirect</span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> reverse</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> user.forms <span class="keyword">import</span> UserRegisterForm, UserLoginForm</span><br><span class="line"><span class="keyword">from</span> user.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'login.html'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        <span class="comment"># 使用表单验证</span></span><br><span class="line">        form = UserLoginForm(request.POST)</span><br><span class="line">        <span class="keyword">if</span> form.is_valid():</span><br><span class="line">            <span class="comment"># 验证字段成功</span></span><br><span class="line">            username = form.cleaned_data[<span class="string">'username'</span>]</span><br><span class="line">            pwd = form.cleaned_data[<span class="string">'pwd'</span>]</span><br><span class="line">            user = User.objects.filter(username=username).first()</span><br><span class="line">            <span class="keyword">if</span> user:</span><br><span class="line">                <span class="comment"># 校验密码是否一致</span></span><br><span class="line">                <span class="keyword">if</span> check_password(pwd, user.password):</span><br><span class="line">                    <span class="comment"># 校验成功</span></span><br><span class="line">                    request.session[<span class="string">'user_id'</span>] = user.id</span><br><span class="line">                    <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'goods:index'</span>))</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 密码错误</span></span><br><span class="line">                    error_pwd = <span class="string">'账号或密码错误'</span></span><br><span class="line">                    <span class="keyword">return</span> render(request, <span class="string">'login.html'</span>, &#123;<span class="string">'error_pwd'</span>: error_pwd&#125;)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                error_pwd = <span class="string">'账号或密码错误'</span></span><br><span class="line">                <span class="keyword">return</span> render(request, <span class="string">'login.html'</span>, &#123;<span class="string">'error_pwd'</span>: error_pwd&#125;)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            errors = form.errors</span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">'login.html'</span>, &#123;<span class="string">'errors'</span>: errors&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">user_center_info</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'user_center_info.html'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">user_center_order</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'user_center_order.html'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">user_center_site</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'user_center_site.html'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>三、中间件校验登录状态<br>1.定义校验中间件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponseRedirect</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> reverse</span><br><span class="line"><span class="keyword">from</span> django.utils.deprecation <span class="keyword">import</span> MiddlewareMixin</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> user.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginStatusMiddleware</span><span class="params">(MiddlewareMixin)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> request.path <span class="keyword">in</span> [reverse(<span class="string">'user:register'</span>), reverse(<span class="string">'user:login'</span>)]:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">        user_id = request.session.get(<span class="string">'user_id'</span>)</span><br><span class="line">        <span class="keyword">if</span> user_id:</span><br><span class="line">            user = User.objects.get(pk=user_id)</span><br><span class="line">            request.user = user</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'user:login'</span>))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_response</span><span class="params">(self, request, response)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure></p>
+<p>2.主页面模块<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> goods.models <span class="keyword">import</span> Goods, GoodsCategory</span><br><span class="line"><span class="keyword">from</span> user.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        data = &#123;&#125;</span><br><span class="line">        <span class="comment"># 循环商品分类</span></span><br><span class="line">        <span class="keyword">for</span> cate <span class="keyword">in</span> GoodsCategory.CATEGORY_TYPE:</span><br><span class="line">            <span class="comment"># 获取当前分类下的前四个商品信息</span></span><br><span class="line">            goods = Goods.objects.filter(category_id=cate[<span class="number">0</span>])[<span class="number">0</span>:<span class="number">4</span>]</span><br><span class="line">            <span class="comment"># 组装成键值对，key为商品分类的名称，value为当前分类的商品信息</span></span><br><span class="line">            data[cate[<span class="number">1</span>]] = goods</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'index.html'</span>, &#123;<span class="string">'goods_category'</span>: data&#125;)</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/07/day10-Django/" class="next">Next post Django-restful使用指南 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
