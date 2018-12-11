@@ -1,0 +1,336 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、商品详情模块1.在urls.py文件中定义路由12345678910from django.conf.urls import url, includefrom goods import viewsurlpatterns = [    # 首页    url(r'index/', views.index, name='index'),    # 商品详情    url(r'^detail/...">
+  
+  <title>天天生鲜项目-02 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/10/day11-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        天天生鲜项目-01
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>天天生鲜项目-02</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-11</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-11</span>
+      
+      
+      
+    </p>
+    
+    <p>一、商品详情模块<br>1.在urls.py文件中定义路由<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url, include</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> goods <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    <span class="comment"># 首页</span></span><br><span class="line">    url(<span class="string">r'index/'</span>, views.index, name=<span class="string">'index'</span>),</span><br><span class="line">    <span class="comment"># 商品详情</span></span><br><span class="line">    url(<span class="string">r'^detail/(\d+)/'</span>, views.detail, name=<span class="string">'detail'</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>2.查看商品详情功能<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detail</span><span class="params">(request, id)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        goods = Goods.objects.get(pk=id)</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'detail.html'</span>, &#123;<span class="string">'goods'</span>: goods&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>3.detail.html<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line">&#123;% extends <span class="string">'base_main.html'</span> %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block title %&#125;</span><br><span class="line">    天天生鲜-商品详情</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block search %&#125;</span><br><span class="line">    &#123;% load  static %&#125;</span><br><span class="line">    &lt;div class="search_bar clearfix"&gt;</span><br><span class="line">        &lt;a href="&#123;% url 'goods:index' %&#125;" class="logo fl"&gt;&lt;img src="&#123;% static 'images/logo.png' %&#125;"&gt;&lt;/a&gt;</span><br><span class="line">        &lt;div class="search_con fl"&gt;</span><br><span class="line">            &lt;input type="text" class="input_text fl" name="" placeholder="搜索商品"&gt;</span><br><span class="line">            &lt;input type="button" class="input_btn fr" name="" value="搜索"&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">        &lt;div class="guest_cart fr"&gt;</span><br><span class="line">            &lt;a href="&#123;% url 'carts:cart' %&#125;" class="cart_name fl"&gt;我的购物车&lt;/a&gt;</span><br><span class="line">            &lt;div class="goods_count fl" id="show_count"&gt;0&lt;/div&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line">	&lt;div class="navbar_con"&gt;</span><br><span class="line">		&lt;div class="navbar clearfix"&gt;</span><br><span class="line">			&lt;div class="subnav_con fl"&gt;</span><br><span class="line">				&lt;h1&gt;全部商品分类&lt;/h1&gt;</span><br><span class="line">				&lt;span&gt;&lt;/span&gt;</span><br><span class="line">				&lt;ul class="subnav"&gt;</span><br><span class="line">					&lt;li&gt;&lt;a href="#" class="fruit"&gt;新鲜水果&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">					&lt;li&gt;&lt;a href="#" class="seafood"&gt;海鲜水产&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">					&lt;li&gt;&lt;a href="#" class="meet"&gt;猪牛羊肉&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">					&lt;li&gt;&lt;a href="#" class="egg"&gt;禽类蛋品&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">					&lt;li&gt;&lt;a href="#" class="vegetables"&gt;新鲜蔬菜&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">					&lt;li&gt;&lt;a href="#" class="ice"&gt;速冻食品&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">				&lt;/ul&gt;</span><br><span class="line">			&lt;/div&gt;</span><br><span class="line">			&lt;ul class="navlist fl"&gt;</span><br><span class="line">				&lt;li&gt;&lt;a href=""&gt;首页&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">				&lt;li class="interval"&gt;|&lt;/li&gt;</span><br><span class="line">				&lt;li&gt;&lt;a href=""&gt;手机生鲜&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">				&lt;li class="interval"&gt;|&lt;/li&gt;</span><br><span class="line">				&lt;li&gt;&lt;a href=""&gt;抽奖&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">			&lt;/ul&gt;</span><br><span class="line">		&lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">	&lt;div class="breadcrumb"&gt;</span><br><span class="line">		&lt;a href="#"&gt;全部分类&lt;/a&gt;</span><br><span class="line">		&lt;span&gt;&gt;&lt;/span&gt;</span><br><span class="line">		&lt;a href="#"&gt;新鲜水果&lt;/a&gt;</span><br><span class="line">		&lt;span&gt;&gt;&lt;/span&gt;</span><br><span class="line">		&lt;a href="#"&gt;商品详情&lt;/a&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">	&lt;div class="goods_detail_con clearfix"&gt;</span><br><span class="line">		&lt;div class="goods_detail_pic fl"&gt;&lt;img src="/media/&#123;&#123; goods.goods_front_image &#125;&#125;"&gt;&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">		&lt;div class="goods_detail_list fr"&gt;</span><br><span class="line">			&lt;h3&gt;&#123;&#123; goods.name &#125;&#125;&lt;/h3&gt;</span><br><span class="line">			&lt;p&gt;&#123;&#123; goods.goods_brief &#125;&#125;&lt;/p&gt;</span><br><span class="line">			&lt;div class="prize_bar"&gt;</span><br><span class="line">				&lt;span class="show_pirze"&gt;¥&lt;em&gt;&#123;&#123; goods.shop_price &#125;&#125;&lt;/em&gt;&lt;/span&gt;</span><br><span class="line">				&lt;span class="show_unit"&gt;单  位：500g&lt;/span&gt;</span><br><span class="line">			&lt;/div&gt;</span><br><span class="line">			&lt;div class="goods_num clearfix"&gt;</span><br><span class="line">				&lt;div class="num_name fl"&gt;数 量：&lt;/div&gt;</span><br><span class="line">				&lt;div class="num_add fl"&gt;</span><br><span class="line">					&lt;input type="text" class="num_show fl" value="1" onblur="change_val(&#123;&#123; goods.goods_nums &#125;&#125;)"&gt;</span><br><span class="line">					&lt;a href="javascript:;" class="add fr" onclick="add_cart(&#123;&#123; goods.goods_nums &#125;&#125;)"&gt;+&lt;/a&gt;</span><br><span class="line">					&lt;a href="javascript:;" class="minus fr" onclick="sub_cart()"&gt;-&lt;/a&gt;</span><br><span class="line">				&lt;/div&gt; </span><br><span class="line">			&lt;/div&gt;</span><br><span class="line">			&lt;div class="total"&gt;总价：&lt;em&gt;&#123;&#123; goods.shop_price &#125;&#125; 元&lt;/em&gt;&lt;/div&gt;</span><br><span class="line">			&lt;div class="operate_btn"&gt;</span><br><span class="line">				&lt;a href="javascript:;" class="buy_btn"&gt;立即购买&lt;/a&gt;</span><br><span class="line">				&lt;a href="javascript:;" class="add_cart" id="add_cart" onclick="add_to_cart(&#123;&#123; goods.id &#125;&#125;)"&gt;加入购物车&lt;/a&gt;</span><br><span class="line">			&lt;/div&gt;</span><br><span class="line">		&lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">	&lt;div class="main_wrap clearfix"&gt;</span><br><span class="line">		&lt;div class="l_wrap fl clearfix"&gt;</span><br><span class="line">			&lt;div class="new_goods"&gt;</span><br><span class="line">				&lt;h3&gt;新品推荐&lt;/h3&gt;</span><br><span class="line">				&lt;ul&gt;</span><br><span class="line">					&lt;li&gt;</span><br><span class="line">						&lt;a href="#"&gt;&lt;img src="&#123;% static 'images/goods/goods001.jpg' %&#125;"&gt;&lt;/a&gt;</span><br><span class="line">						&lt;h4&gt;&lt;a href="#"&gt;进口柠檬&lt;/a&gt;&lt;/h4&gt;</span><br><span class="line">						&lt;div class="prize"&gt;￥3.90&lt;/div&gt;</span><br><span class="line">					&lt;/li&gt;</span><br><span class="line">					&lt;li&gt;</span><br><span class="line">						&lt;a href="#"&gt;&lt;img src="&#123;% static 'images/goods/goods002.jpg' %&#125;"&gt;&lt;/a&gt;</span><br><span class="line">						&lt;h4&gt;&lt;a href="#"&gt;玫瑰香葡萄&lt;/a&gt;&lt;/h4&gt;</span><br><span class="line">						&lt;div class="prize"&gt;￥16.80&lt;/div&gt;</span><br><span class="line">					&lt;/li&gt;</span><br><span class="line">				&lt;/ul&gt;</span><br><span class="line">			&lt;/div&gt;</span><br><span class="line">		&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">		&lt;div class="r_wrap fr clearfix"&gt;</span><br><span class="line">			&lt;ul class="detail_tab clearfix"&gt;</span><br><span class="line">				&lt;li class="active"&gt;商品介绍&lt;/li&gt;</span><br><span class="line">				&lt;li&gt;评论&lt;/li&gt;</span><br><span class="line">			&lt;/ul&gt;</span><br><span class="line"></span><br><span class="line">			&lt;div class="tab_content"&gt;</span><br><span class="line">				&lt;dl&gt;</span><br><span class="line">					&lt;dt&gt;商品详情：&lt;/dt&gt;</span><br><span class="line">					&lt;dd&gt;&#123;&#123; goods.goods_desc | safe &#125;&#125;&lt;/dd&gt;</span><br><span class="line">				&lt;/dl&gt;</span><br><span class="line">			&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">		&lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、添加商品到购物车模块<br>1.在urls.py文件中定义路由<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url, include</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> carts <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    <span class="comment"># 购物车页面</span></span><br><span class="line">    url(<span class="string">r'^cart/'</span>, views.cart, name=<span class="string">'cart'</span>),</span><br><span class="line">    <span class="comment"># 加入购物车</span></span><br><span class="line">    url(<span class="string">r'^add_cart/'</span>, views.add_cart, name=<span class="string">'add_cart'</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>2.添加商品到购物车功能<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse</span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cart</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'cart.html'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_cart</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        session_goods = request.session.get(<span class="string">'goods'</span>)</span><br><span class="line">        goods_count = len(session_goods)</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'code'</span>: <span class="number">200</span>, <span class="string">'msg'</span>: <span class="string">'请求成功'</span>, <span class="string">'goods_count'</span>: goods_count&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        <span class="comment"># 保存到session中</span></span><br><span class="line">        <span class="comment"># 1.获取前端ajax提交的商品goods_id，商品数量nums</span></span><br><span class="line">        <span class="comment"># 2.组装存储到session中的数据结构</span></span><br><span class="line">        <span class="comment"># [[goods_id, nums, is_select], [goods_id, nums, is_select]...]</span></span><br><span class="line">        <span class="comment"># 3.如果加入到session中的商品已经存在于session中，则更新nums字段</span></span><br><span class="line">        goods_id = int(request.POST.get(<span class="string">'goods_id'</span>))</span><br><span class="line">        nums = int(request.POST.get(<span class="string">'nums'</span>))</span><br><span class="line">        <span class="comment"># 组装存储的结构：[商品id值，商品数量，商品选择状态]</span></span><br><span class="line">        goods_list = [int(goods_id), int(nums), <span class="number">1</span>]</span><br><span class="line">        <span class="comment"># 判断session中是否保存了购物车数据：&#123;'goods': [[id, nums, 1], [id, nums, 1]]</span></span><br><span class="line">        session_goods = request.session.get(<span class="string">'goods'</span>)</span><br><span class="line">        <span class="keyword">if</span> session_goods:</span><br><span class="line">            <span class="comment"># 添加或者修改</span></span><br><span class="line">            flag = <span class="keyword">False</span></span><br><span class="line">            <span class="keyword">for</span> goods <span class="keyword">in</span> session_goods:</span><br><span class="line">                <span class="comment"># goods为[goods_id, nums, is_select]</span></span><br><span class="line">                <span class="keyword">if</span> goods[<span class="number">0</span>] == goods_id:</span><br><span class="line">                    goods[<span class="number">1</span>] += nums</span><br><span class="line">                    flag = <span class="keyword">True</span></span><br><span class="line">            <span class="comment"># 添加</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> flag:</span><br><span class="line">                session_goods.append(goods_list)</span><br><span class="line">            request.session[<span class="string">'goods'</span>] = session_goods</span><br><span class="line">            <span class="comment"># session中保存的商品的个数</span></span><br><span class="line">            goods_count = len(session_goods)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 第一次添加商品到session中时，保存键值对</span></span><br><span class="line">            <span class="comment"># 键为goods，值为[[id, nums, is_select], [id, nums, is_select]]</span></span><br><span class="line">            request.session[<span class="string">'goods'</span>] = [goods_list]</span><br><span class="line">            goods_count = <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'code'</span>: <span class="number">200</span>, <span class="string">'msg'</span>: <span class="string">'请求成功'</span>, <span class="string">'goods_count'</span>: goods_count&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>3.前端页面Ajax提交商品信息代码<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">&#123;% csrf_token %&#125;</span><br><span class="line">   &lt;script type="text/javascript" src="&#123;% static 'js/jquery-1.12.4.min.js' %&#125;"&gt;&lt;/script&gt;</span><br><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">        function add_cart(goods_nums)&#123;</span><br><span class="line">	      var v = $(<span class="string">'.num_show'</span>).val()</span><br><span class="line">             var new_value = parseInt(v) + <span class="number">1</span></span><br><span class="line">             <span class="keyword">if</span> (new_value &lt;= goods_nums)&#123;</span><br><span class="line">                 $(<span class="string">'.num_show'</span>).val(new_value)</span><br><span class="line">                 var price = $(<span class="string">'.show_pirze em'</span>).text()</span><br><span class="line">                 var new_total = price * new_value</span><br><span class="line">                 $(<span class="string">'.total em'</span>).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">' 元'</span>)</span><br><span class="line">             &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function sub_cart()&#123;</span><br><span class="line">	     var v =  $(<span class="string">'.num_show'</span>).val()</span><br><span class="line">            var new_value = parseInt(v) - <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> (new_value &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                $(<span class="string">'.num_show'</span>).val(new_value)</span><br><span class="line">                var price = $(<span class="string">'.show_pirze em'</span>).text()</span><br><span class="line">                var new_total = price * new_value</span><br><span class="line">                $(<span class="string">'.total em'</span>).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">' 元'</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function change_val(goods_nums) &#123;</span><br><span class="line">            var v = $(<span class="string">'.num_show'</span>).val()</span><br><span class="line">            <span class="keyword">if</span> (parseInt(v) &gt; <span class="number">0</span>)&#123;</span><br><span class="line">               <span class="keyword">if</span>(v &lt;= goods_nums &amp;&amp; v &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                    var price = $(<span class="string">'.show_pirze em'</span>).text()</span><br><span class="line">                    var new_total = parseInt(v) * price</span><br><span class="line">                    $(<span class="string">'.total em'</span>).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">' 元'</span>)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (v &gt; goods_nums)&#123;</span><br><span class="line">                    $(<span class="string">'.num_show'</span>).val(goods_nums)</span><br><span class="line">                    var v = $(<span class="string">'.num_show'</span>).val()</span><br><span class="line">                    var price = $(<span class="string">'.show_pirze em'</span>).text()</span><br><span class="line">                    var new_total = parseInt(v) * price</span><br><span class="line">                    $(<span class="string">'.total em'</span>).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">' 元'</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                $(<span class="string">'.num_show'</span>).val(<span class="number">1</span>)</span><br><span class="line">                var price = $(<span class="string">'.show_pirze em'</span>).text()</span><br><span class="line">                var new_total = <span class="number">1</span> * price</span><br><span class="line">                $(<span class="string">'.total em'</span>).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">' 元'</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function add_to_cart(id) &#123;</span><br><span class="line">	    var nums = $(<span class="string">'.num_show'</span>).val()</span><br><span class="line">           var csrf = $(<span class="string">'input[name="csrfmiddlewaretoken"]'</span>).val()</span><br><span class="line">            $.ajax(&#123;</span><br><span class="line">                url: <span class="string">'/carts/add_cart/'</span>,</span><br><span class="line">                data: &#123;<span class="string">'goods_id'</span>: id, <span class="string">'nums'</span>: nums&#125;,</span><br><span class="line">                type: <span class="string">'POST'</span>,</span><br><span class="line">                dataType: <span class="string">'JSON'</span>,</span><br><span class="line">                headers: &#123;<span class="string">'X-CSRFToken'</span>: csrf&#125;,</span><br><span class="line">                success: function (data) &#123;</span><br><span class="line">                    <span class="keyword">if</span>(data.code == <span class="string">'200'</span>)&#123;</span><br><span class="line">                        $(<span class="string">'#show_count'</span>).text(data.goods_count)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                error: function (data) &#123;</span><br><span class="line">                    alert(<span class="string">'添加失败'</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/10/day11-Django/" class="next">Next post 天天生鲜项目-01 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
