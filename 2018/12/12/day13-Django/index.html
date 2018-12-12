@@ -1,0 +1,336 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、购物车数据同步模块1.定义数据同步中间件123456789101112131415161718192021222324252627282930313233343536373839404142from django.utils.deprecation import MiddlewareMixinfrom carts.models import ShoppingCartclass Sessi...">
+  
+  <title>天天生鲜项目-03 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/11/day12-Django/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        天天生鲜项目-02
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>天天生鲜项目-03</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-12</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-12</span>
+      
+      
+      
+    </p>
+    
+    <p>一、购物车数据同步模块<br>1.定义数据同步中间件<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.utils.deprecation <span class="keyword">import</span> MiddlewareMixin</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> carts.models <span class="keyword">import</span> ShoppingCart</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SessionSyncMiddleware</span><span class="params">(MiddlewareMixin)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_response</span><span class="params">(self, request, response)</span>:</span></span><br><span class="line">        <span class="comment"># 没有登录就不用做数据同步</span></span><br><span class="line">        <span class="comment"># 登录情况才做数据从session同步到数据库，且重新更新session数据</span></span><br><span class="line">        user_id = request.session.get(<span class="string">'user_id'</span>)</span><br><span class="line">        <span class="keyword">if</span> user_id:</span><br><span class="line">            <span class="comment"># 登录情况</span></span><br><span class="line">            session_goods = request.session.get(<span class="string">'goods'</span>)</span><br><span class="line">            <span class="keyword">if</span> session_goods:</span><br><span class="line">                <span class="comment"># 1.判断session中商品是否存在于数据库中，如果存在则更新</span></span><br><span class="line">                <span class="comment"># 2.如果不存在则创建</span></span><br><span class="line">                shop_carts = ShoppingCart.objects.filter(user_id=user_id)</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 更新购物车中的商品数量，记录更新商品的id值</span></span><br><span class="line">                data = []</span><br><span class="line">                <span class="keyword">for</span> goods <span class="keyword">in</span> shop_carts:</span><br><span class="line">                    <span class="keyword">for</span> se_goods <span class="keyword">in</span> session_goods:</span><br><span class="line">                        <span class="keyword">if</span> se_goods[<span class="number">0</span>] == goods.goods_id:</span><br><span class="line">                            goods.nums = se_goods[<span class="number">1</span>]</span><br><span class="line">                            goods.save()</span><br><span class="line">                            data.append(se_goods[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 添加</span></span><br><span class="line">                session_goods_ids = [i[<span class="number">0</span>] <span class="keyword">for</span> i <span class="keyword">in</span> session_goods]</span><br><span class="line">                add_goods_ids = list(set(session_goods_ids) - set(data))</span><br><span class="line">                <span class="keyword">for</span> add_goods_id <span class="keyword">in</span> add_goods_ids:</span><br><span class="line">                    <span class="keyword">for</span> session_good <span class="keyword">in</span> session_goods:</span><br><span class="line">                        <span class="keyword">if</span> add_goods_id == session_good[<span class="number">0</span>]:</span><br><span class="line">                            ShoppingCart.objects.create(user_id=user_id, goods_id=add_goods_id, nums=session_good[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 将数据库同步到session</span></span><br><span class="line">            new_shop_carts = ShoppingCart.objects.filter(user_id=user_id)</span><br><span class="line">            session_new_goods = [[i.goods_id, i.nums, i.is_select] <span class="keyword">for</span> i <span class="keyword">in</span> new_shop_carts]</span><br><span class="line">            request.session[<span class="string">'goods'</span>] = session_new_goods</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、购物车功能模块<br>1.在urls.py配置文件中定义路由<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url, include</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> carts <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    <span class="comment"># 购物车页面</span></span><br><span class="line">    url(<span class="string">r'^cart/'</span>, views.cart, name=<span class="string">'cart'</span>),</span><br><span class="line">    <span class="comment"># 加入购物车</span></span><br><span class="line">    url(<span class="string">r'^add_cart/'</span>, views.add_cart, name=<span class="string">'add_cart'</span>),</span><br><span class="line">    <span class="comment"># 计算购物车中的商品数量</span></span><br><span class="line">    url(<span class="string">'^count_cart/'</span>, views.count_cart, name=<span class="string">'count_cart'</span>),</span><br><span class="line">    <span class="comment"># 修改购物车中商品的勾选状态和商品属性</span></span><br><span class="line">    url(<span class="string">'^change_cart/'</span>, views.change_cart, name=<span class="string">'change_cart'</span>),</span><br><span class="line">    <span class="comment"># 删除购物车中的商品</span></span><br><span class="line">    url(<span class="string">'^del_cart/(\d+)/'</span>, views.del_cart, name=<span class="string">'del_cart'</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>2.计算购物车中的商品数量<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count_cart</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        session_goods = request.session.get(<span class="string">'goods'</span>)</span><br><span class="line">        count = len(session_goods) <span class="keyword">if</span> session_goods <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'code'</span>: <span class="number">200</span>, <span class="string">'msg'</span>: <span class="string">'请求成功'</span>, <span class="string">'count'</span>: count&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>3.修改购物车中商品的勾选状态和商品属性<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_cart</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        <span class="comment"># 获取前端Ajax传递的goods_id,is_select,nums</span></span><br><span class="line">        goods_id = int(request.POST.get(<span class="string">'goods_id'</span>))</span><br><span class="line">        is_select = request.POST.get(<span class="string">'is_select'</span>)</span><br><span class="line">        nums = request.POST.get(<span class="string">'nums'</span>)</span><br><span class="line">        <span class="comment"># 获取session中商品的信息</span></span><br><span class="line">        session_goods = request.session.get(<span class="string">'goods'</span>)</span><br><span class="line">        <span class="keyword">for</span> goods <span class="keyword">in</span> session_goods:</span><br><span class="line">            <span class="keyword">if</span> goods_id == goods[<span class="number">0</span>]:</span><br><span class="line">                <span class="comment"># 修改session中的商品的数量和选择状态</span></span><br><span class="line">                goods[<span class="number">1</span>] = int(nums) <span class="keyword">if</span> nums <span class="keyword">else</span> goods[<span class="number">1</span>]</span><br><span class="line">                goods[<span class="number">2</span>] = int(is_select) <span class="keyword">if</span> is_select <span class="keyword">else</span> goods[<span class="number">2</span>]</span><br><span class="line">        request.session[<span class="string">'goods'</span>] = session_goods</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'code'</span>: <span class="number">200</span>, <span class="string">'msg'</span>: <span class="string">'请求成功'</span>&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>4.删除购物车中的商品<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse, HttpResponseRedirect</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> carts.models <span class="keyword">import</span> ShoppingCart</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">del_cart</span><span class="params">(request, id)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        user_id = request.session.get(<span class="string">'user_id'</span>)</span><br><span class="line">        <span class="keyword">if</span> user_id:</span><br><span class="line">            <span class="comment"># 登录情况，删除数据库中的数据</span></span><br><span class="line">            ShoppingCart.objects.filter(user_id=user_id, goods_id=id).delete()</span><br><span class="line">        <span class="comment"># 不管登录与否，删除session中的数据</span></span><br><span class="line">        session_goods = request.session.get(<span class="string">'goods'</span>)</span><br><span class="line">        <span class="keyword">for</span> goods <span class="keyword">in</span> session_goods:</span><br><span class="line">            <span class="keyword">if</span> goods[<span class="number">0</span>] == int(id):</span><br><span class="line">                session_goods.remove(goods)</span><br><span class="line">        request.session[<span class="string">'goods'</span>] = session_goods</span><br><span class="line">        <span class="keyword">return</span> HttpResponseRedirect(reverse(<span class="string">'carts:cart'</span>))</span><br></pre></td></tr></table></figure></p>
+<p>5.购物车页面JS代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br></pre></td><td class="code"><pre><span class="line">&#123;% extends <span class="string">'base_main.html'</span> %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block title %&#125;</span><br><span class="line">    天天生鲜-购物车</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block js %&#125;</span><br><span class="line">    &#123;% load static %&#125;</span><br><span class="line">    &lt;script type="text/javascript" src="&#123;% static 'js/jquery-1.12.4.min.js' %&#125;"&gt;&lt;/script&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block search %&#125;</span><br><span class="line">	&lt;div class="search_bar clearfix"&gt;</span><br><span class="line">		&lt;a href="&#123;% url 'goods:index' %&#125;" class="logo fl"&gt;&lt;img src="&#123;% static 'images/logo.png' %&#125;"&gt;&lt;/a&gt;</span><br><span class="line">		&lt;div class="sub_page_name fl"&gt;|&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;购物车&lt;/div&gt;</span><br><span class="line">		&lt;div class="search_con fr"&gt;</span><br><span class="line">			&lt;input type="text" class="input_text fl" name="" placeholder="搜索商品"&gt;</span><br><span class="line">			&lt;input type="button" class="input_btn fr" name="" value="搜索"&gt;</span><br><span class="line">		&lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line">	&lt;div class="total_count"&gt;全部商品&lt;em&gt;0&lt;/em&gt;件&lt;/div&gt;</span><br><span class="line">	&lt;ul class="cart_list_th clearfix"&gt;</span><br><span class="line">		&lt;li class="col01"&gt;商品名称&lt;/li&gt;</span><br><span class="line">		&lt;li class="col02"&gt;商品单位&lt;/li&gt;</span><br><span class="line">		&lt;li class="col03"&gt;商品价格&lt;/li&gt;</span><br><span class="line">		&lt;li class="col04"&gt;数量&lt;/li&gt;</span><br><span class="line">		&lt;li class="col05"&gt;小计&lt;/li&gt;</span><br><span class="line">		&lt;li class="col06"&gt;操作&lt;/li&gt;</span><br><span class="line">	&lt;/ul&gt;</span><br><span class="line">    &#123;% <span class="keyword">if</span> goods_all %&#125;</span><br><span class="line">    &#123;% <span class="keyword">for</span> goods <span class="keyword">in</span> goods_all %&#125;</span><br><span class="line">	&lt;ul class="cart_list_td clearfix"&gt;</span><br><span class="line">		&lt;li class="col01"&gt;&lt;input type="checkbox" name="sing_checkbox" checked&gt;&lt;/li&gt;</span><br><span class="line">		&lt;li class="col02"&gt;&lt;img src="/media/&#123;&#123; goods.0.goods_front_image &#125;&#125;"&gt;&lt;/li&gt;</span><br><span class="line">		&lt;li class="col03"&gt;&#123;&#123; goods.0.name &#125;&#125;&lt;br&gt;&lt;em&gt;&#123;&#123; goods.0.shop_price &#125;&#125;/500g&lt;/em&gt;&lt;/li&gt;</span><br><span class="line">		&lt;li class="col04"&gt;500g&lt;/li&gt;</span><br><span class="line">		&lt;li class="col05" id="price_&#123;&#123; goods.0.id &#125;&#125;"&gt;&#123;&#123; goods.0.shop_price &#125;&#125;元&lt;/li&gt;</span><br><span class="line">		&lt;li class="col06"&gt;</span><br><span class="line">			&lt;div class="num_add"&gt;</span><br><span class="line">				&lt;a href="javascript:;" class="add fl" onclick="add_cart(&#123;&#123; goods.0.id &#125;&#125;, &#123;&#123; goods.0.goods_nums &#125;&#125;)"&gt;+&lt;/a&gt;</span><br><span class="line">				&lt;input type="text" class="num_show fl" value="&#123;&#123; goods.1 &#125;&#125;" id="goods_cart_&#123;&#123; goods.0.id &#125;&#125;" onblur="change_val(&#123;&#123; goods.0.id &#125;&#125;, &#123;&#123; goods.0.goods_nums &#125;&#125;)"&gt;</span><br><span class="line">				&lt;a href="javascript:;" class="minus fl" onclick="sub_cart(&#123;&#123; goods.0.id &#125;&#125;)"&gt;-&lt;/a&gt;</span><br><span class="line">			&lt;/div&gt;</span><br><span class="line">		&lt;/li&gt;</span><br><span class="line">		&lt;li class="col07" id="total_&#123;&#123; goods.0.id &#125;&#125;"&gt;&#123;&#123; goods.2 &#125;&#125;元&lt;/li&gt;</span><br><span class="line">		&lt;li class="col08"&gt;&lt;a href="&#123;% url 'carts:del_cart' goods.0.id %&#125;"&gt;删除&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">	&lt;/ul&gt;</span><br><span class="line">    &#123;% endfor %&#125;</span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line">	&lt;ul class="settlements"&gt;</span><br><span class="line">		&lt;li class="col01"&gt;&lt;input type="checkbox" name="all_checkbox" checked&gt;&lt;/li&gt;</span><br><span class="line">		&lt;li class="col02"&gt;全选&lt;/li&gt;</span><br><span class="line">		&lt;li class="col03"&gt;合计(不含运费)：&lt;span&gt;¥&lt;/span&gt;&lt;em id="total_price"&gt;42.60&lt;/em&gt;&lt;br&gt;共计&lt;b&gt;2&lt;/b&gt;件商品&lt;/li&gt;</span><br><span class="line">		&lt;li class="col04"&gt;&lt;a href="place_order.html"&gt;去结算&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">	&lt;/ul&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block js2 %&#125;</span><br><span class="line">    &#123;% csrf_token %&#125;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function calcTotal()&#123;</span><br><span class="line">            var amountInput = $(<span class="string">'.num_show'</span>)</span><br><span class="line">            var checkboxes = $(<span class="string">'input[name="sing_checkbox"]'</span>)</span><br><span class="line">            var currentPrice = $(<span class="string">'.col07'</span>)</span><br><span class="line">            var totalAmount = <span class="number">0</span></span><br><span class="line">            var totalPrice = <span class="number">0</span></span><br><span class="line">            amountInput.each(function (index) &#123;</span><br><span class="line">                <span class="keyword">if</span> (checkboxes[index].checked)&#123;</span><br><span class="line">                    var amount = parseInt($(this).val())</span><br><span class="line">                    totalAmount += amount</span><br><span class="line">                    var price = parseFloat($(currentPrice[index]).text())</span><br><span class="line">                    totalPrice += price</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">            $(<span class="string">'#total_price'</span>).text(totalPrice)</span><br><span class="line">            $(<span class="string">'.col03 b'</span>).text(totalAmount)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $(function()&#123;</span><br><span class="line">            calcTotal()</span><br><span class="line">            $(<span class="string">'input[name="all_checkbox"]'</span>).on(<span class="string">'click'</span>, function (evt) &#123;</span><br><span class="line">                $(<span class="string">'input[name="sing_checkbox"]'</span>).prop(<span class="string">'checked'</span>, evt.target.checked)</span><br><span class="line">                calcTotal()</span><br><span class="line">            &#125;)</span><br><span class="line"></span><br><span class="line">            var checkBox = $(<span class="string">'input[name="sing_checkbox"]'</span>)</span><br><span class="line">            $.each(checkBox, function (index, elem1) &#123;</span><br><span class="line">                $(elem1).on(<span class="string">'click'</span>, function () &#123;</span><br><span class="line">                    $.each(checkBox, function (index, elem2) &#123;</span><br><span class="line">                        <span class="keyword">if</span>($(elem2).<span class="keyword">is</span>(<span class="string">':checked'</span>) == false)&#123;</span><br><span class="line">                              $(<span class="string">'input[name="all_checkbox"]'</span>).prop(&#123;</span><br><span class="line">                                  <span class="string">'checked'</span> : false</span><br><span class="line">                              &#125;)</span><br><span class="line">                              <span class="keyword">return</span> false</span><br><span class="line">                        &#125;</span><br><span class="line">                        $(<span class="string">'input[name="all_checkbox"]'</span>).prop(&#123;</span><br><span class="line">                                  <span class="string">'checked'</span> : true</span><br><span class="line">                        &#125;)</span><br><span class="line">                    &#125;)</span><br><span class="line">                    calcTotal()</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;)</span><br><span class="line">         &#125;)</span><br><span class="line"></span><br><span class="line">        $.ajax(&#123;</span><br><span class="line">            url: <span class="string">'/carts/count_cart/'</span>,</span><br><span class="line">            type: <span class="string">'GET'</span>,</span><br><span class="line">            dataType: <span class="string">'JSON'</span>,</span><br><span class="line">            success: function (data) &#123;</span><br><span class="line">                $(<span class="string">'.total_count em'</span>).text(data.count)</span><br><span class="line">            &#125;,</span><br><span class="line">            error: function (data) &#123;</span><br><span class="line">                alert(<span class="string">'获取购物车商品数量失败'</span>)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        function add_cart(goods_id, goods_nums) &#123;</span><br><span class="line">            var v = $(<span class="string">'#goods_cart_'</span> + goods_id).val()</span><br><span class="line">            var new_value = parseInt(v) + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> (new_value &lt;= goods_nums)&#123;</span><br><span class="line">                var price = parseInt($(<span class="string">'#price_'</span> + goods_id).text())</span><br><span class="line">                $(<span class="string">'#goods_cart_'</span> + goods_id).val(new_value)</span><br><span class="line">                total_price = price * new_value</span><br><span class="line">                $(<span class="string">'#total_'</span> + goods_id).text(total_price.toFixed(<span class="number">1</span>)+<span class="string">'元'</span>)</span><br><span class="line">                calcTotal()</span><br><span class="line">                cart_ajax(goods_id)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function sub_cart(goods_id) &#123;</span><br><span class="line">            var v = $(<span class="string">'#goods_cart_'</span> + goods_id).val()</span><br><span class="line">            <span class="keyword">if</span> (v&gt;<span class="number">1</span>)&#123;</span><br><span class="line">                var new_value = parseInt(v) - <span class="number">1</span></span><br><span class="line">                 var price = parseInt($(<span class="string">'#price_'</span> + goods_id).text())</span><br><span class="line">                $(<span class="string">'#goods_cart_'</span> + goods_id).val(new_value)</span><br><span class="line">                total_price = price * new_value</span><br><span class="line">                $(<span class="string">'#total_'</span> + goods_id).text(total_price.toFixed(<span class="number">1</span>)+<span class="string">'元'</span>)</span><br><span class="line">                calcTotal()</span><br><span class="line">                cart_ajax(goods_id)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function change_val(goods_id, goods_nums) &#123;</span><br><span class="line">             var v =  $(<span class="string">'#goods_cart_'</span> + goods_id).val()</span><br><span class="line">             <span class="keyword">if</span> (parseInt(v) &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(v &lt;= goods_nums &amp;&amp; v &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                     var price = parseFloat($(<span class="string">'#price_'</span> + goods_id).text())</span><br><span class="line">                     var new_total = parseInt(v) * price</span><br><span class="line">                     $(<span class="string">'#total_'</span> + goods_id).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">'元'</span>)</span><br><span class="line">                     calcTotal()</span><br><span class="line">                     cart_ajax(goods_id)</span><br><span class="line">                 &#125;</span><br><span class="line">                 <span class="keyword">if</span> (v &gt; goods_nums)&#123;</span><br><span class="line">                     $(<span class="string">'#goods_cart_'</span> + goods_id).val(goods_nums)</span><br><span class="line">                     var v =  $(<span class="string">'#goods_cart_'</span> + goods_id).val()</span><br><span class="line">                     var price = parseFloat($(<span class="string">'#price_'</span> + goods_id).text())</span><br><span class="line">                     var new_total = parseInt(v) * price</span><br><span class="line">                     $(<span class="string">'#total_'</span> + goods_id).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">'元'</span>)</span><br><span class="line">                     calcTotal()</span><br><span class="line">                     cart_ajax(goods_id)</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                 $(<span class="string">'#goods_cart_'</span> + goods_id).val(<span class="number">1</span>)</span><br><span class="line">                 var price = parseFloat($(<span class="string">'#price_'</span> + goods_id).text())</span><br><span class="line">                 var new_total = <span class="number">1</span> * price</span><br><span class="line">                 $(<span class="string">'#total_'</span> + goods_id).text(new_total.toFixed(<span class="number">1</span>) + <span class="string">'元'</span>)</span><br><span class="line">                 calcTotal()</span><br><span class="line">                 cart_ajax(goods_id)</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">        function cart_ajax(goods_id) &#123;</span><br><span class="line">            var nums = $(<span class="string">'#goods_cart_'</span> + goods_id).val()</span><br><span class="line">            var csrf = $(<span class="string">'input[name="csrfmiddlewaretoken"]'</span>).val()</span><br><span class="line">            $.ajax(&#123;</span><br><span class="line">                url: <span class="string">'/carts/change_cart/'</span>,</span><br><span class="line">                type: <span class="string">'POST'</span>,</span><br><span class="line">                data: &#123;<span class="string">'goods_id'</span>: goods_id, <span class="string">'nums'</span>: nums&#125;,</span><br><span class="line">                dataType: <span class="string">'JSON'</span>,</span><br><span class="line">                headers: &#123;<span class="string">'X-CSRFToken'</span>: csrf&#125;,</span><br><span class="line">                success: function (data) &#123;</span><br><span class="line">                &#125;,</span><br><span class="line">                error: function (data) &#123;</span><br><span class="line">                    add_cart(<span class="string">'失败'</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/11/day12-Django/" class="next">Next post 天天生鲜项目-02 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
