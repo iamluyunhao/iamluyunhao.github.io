@@ -1,0 +1,368 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、模型定义1.安装flask_sqlalchemy和mysql驱动123pip install flask-sqlalchemypip install mysql
+2.定义模型(models.py)123456789101112from flask_sqlalchemy import SQLAlchemy# 获取SQLAlchemy对象db = SQLAlchemy()class Stud...">
+  
+  <title>Flask模型深入 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/18/day17-Flask/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Flask视图和模板
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Flask模型深入</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-19</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-19</span>
+      
+      
+      
+    </p>
+    
+    <p>一、模型定义<br>1.安装flask_sqlalchemy和mysql驱动<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install flask-sqlalchemy</span><br><span class="line"></span><br><span class="line">pip install mysql</span><br></pre></td></tr></table></figure></p>
+<p>2.定义模型(models.py)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取SQLAlchemy对象</span></span><br><span class="line">db = SQLAlchemy()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>, autoincrement=<span class="keyword">True</span>)</span><br><span class="line">    s_name = db.Column(db.String(<span class="number">80</span>), unique=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 定义表名</span></span><br><span class="line">    __tablename__ = <span class="string">'stu'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、数据库连接</p>
+<p>1.配置数据库<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.config[<span class="string">'SQLALCHEMY_DATABASE_URI'</span>] = <span class="string">'mysql+pymysql://root:123456@127.0.0.1:3306/flask'</span></span><br><span class="line"></span><br><span class="line">app.config[<span class="string">'SQLALCHEMY_TRACK_MODIFICATIONS'</span>] = <span class="keyword">False</span></span><br></pre></td></tr></table></figure></p>
+<p>2.初始化db和app对象<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLALchemy</span><br><span class="line"></span><br><span class="line">方法一：</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">db = SQLAlchemy(app)</span><br><span class="line"></span><br><span class="line">方法二：</span><br><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> db</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">db.init_app(app)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>三、数据库迁移</p>
+<p>1.创建数据表<br>db.create_all()表示创建定义模型中对应到数据库中的表</p>
+<p>注意：db.create_all()只可以调用一次。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/create_db/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_db</span><span class="params">()</span>:</span></span><br><span class="line">    db.create_all()</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'创建数据库成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>2.删除数据库中所有的表<br>db.drop_all()表示删除数据库中所有的表<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/drop_db/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drop_db</span><span class="params">()</span>:</span></span><br><span class="line">    db.drop_all()</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'删除数据库成功'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>四、查询数据<br>1.语法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">模型.query.all()</span><br><span class="line"></span><br><span class="line">模型.query.filter(模型.属性名 == xxx)</span><br><span class="line"></span><br><span class="line">模型.query.filter_by(属性名=xxx)</span><br><span class="line"></span><br><span class="line">模型.query.get(id)</span><br></pre></td></tr></table></figure></p>
+<p>2.数据操作<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.session.add(object)</span><br><span class="line"></span><br><span class="line">db.session.commit()</span><br></pre></td></tr></table></figure></p>
+<p>3.查询所有学生的信息<br>注意：all()返回的结果是列表。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/list/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_list</span><span class="params">()</span>:</span></span><br><span class="line">    students = Student.query.all()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'list.html'</span>, students=students)</span><br></pre></td></tr></table></figure></p>
+<p>4.排序<br>(1)升序<br>对象 = 模型.query.order_by(属性名)<br>对象 = 模型.query.order_by(属性名 asc)<br>(2)降序<br>对象 = 模型.query.order_by(-属性名)<br>对象 = 模型.query.order_by(属性名 desc)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 升序</span></span><br><span class="line">    stus = Student.query.order_by(<span class="string">'s_age'</span>)</span><br><span class="line">    stus = Student.query.order_by(<span class="string">'s_age asc'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 降序</span></span><br><span class="line">    stus = Student.query.order_by(<span class="string">'-s_age'</span>)</span><br><span class="line">    stus = Student.query.order_by(<span class="string">'s_age desc'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>5.获取指定条数的数据<br>stus = 模型.query.offset(跳过的记录条数).limit(截取的记录条数)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">    stus = Student.query.offset(<span class="number">0</span>).limit(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>6.模糊查询<br>contains()：包含<br>startswith()：以特定字符开头<br>endswith()：以特定字符结尾<br>like()：模糊查询<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">    stus = Student.query.filter(Student.s_name.contains(<span class="string">'小明'</span>)).all()</span><br><span class="line"></span><br><span class="line">    stus = Student.query.filter(Student.s_name.startswith(<span class="string">'小'</span>)).all()</span><br><span class="line"></span><br><span class="line">    stus = Student.query.filter(Student.s_name.endswith(<span class="string">'明'</span>)).all()</span><br><span class="line"></span><br><span class="line">    stus = Student.query.filter(Student.s_name.like(<span class="string">'_明%'</span>)).all()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>7._in查询<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">	 stus = Student.query.filter(Student.id.in_([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>8.条件查询<br>lt: &lt;<br>le: &lt;=<br>gt: &gt;<br>ge: &gt;=<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 小于</span></span><br><span class="line">    stus = Student.query.filter(Student.s_age.__lt__(<span class="number">21</span>)).all()</span><br><span class="line">    stus = Student.query.filter(Student.s_age &lt; <span class="number">21</span>).all()</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 小于等于</span></span><br><span class="line">    stus = Student.query.filter(Student.s_age.__le__(<span class="number">21</span>)).all()</span><br><span class="line">    stus = Student.query.filter(Student.s_age &lt;= <span class="number">21</span>).all()</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 大于</span></span><br><span class="line">    stus = Student.query.filter(Student.s_age.__gt__(<span class="number">21</span>)).all()</span><br><span class="line">    stus = Student.query.filter(Student.s_age &gt; <span class="number">21</span>).all()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 大于等于</span></span><br><span class="line">    stus = Student.query.filter(Student.s_age.__ge__(<span class="number">21</span>)).all()</span><br><span class="line">    stus = Student.query.filter(Student.s_age &gt;= <span class="number">21</span>).all()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>9.条件查询<br>and_:与<br>or_:或<br>not_:非<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment"># and_</span></span><br><span class="line">    stus = Student.query.filter(and_(Student.s_age &lt; <span class="number">22</span>, Student.s_name.endswith(<span class="string">'明'</span>))).all()</span><br><span class="line">    stus = Student.query.filter(Student.s_age &lt; <span class="number">22</span>).filter(Student.s_name.endswith(<span class="string">'明'</span>)).all()</span><br><span class="line">    stus = Student.query.filter(Student.s_age &lt; <span class="number">22</span>, Student.s_name.endswith(<span class="string">'明'</span>)).all()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># or_</span></span><br><span class="line">    stus = Student.query.filter(or_(Student.s_age &lt; <span class="number">22</span>, Student.s_name.endswith(<span class="string">'明'</span>))).all()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># not_</span></span><br><span class="line">    stus = Student.query.filter(not_(Student.s_age == <span class="number">22</span>)).all()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>五、添加数据<br>提交事务，使用commit提交添加数据的操作<br>1.语法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">对象 = 模型()</span><br><span class="line">对象.属性名 = xxx</span><br></pre></td></tr></table></figure></p>
+<p>2.数据操作<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.session.add(对象)</span><br><span class="line">db.session.commit</span><br></pre></td></tr></table></figure></p>
+<p>3.添加学生信息<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/add/', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_add</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'add.html'</span>)</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        username = request.form.get(<span class="string">'username'</span>)</span><br><span class="line">        phone = request.form.get(<span class="string">'phone'</span>)</span><br><span class="line">        age = request.form.get(<span class="string">'age'</span>)</span><br><span class="line">        stu = Student()</span><br><span class="line">        stu.s_name = username</span><br><span class="line">        stu.s_phone = phone</span><br><span class="line">        stu.s_age = age</span><br><span class="line">        db.session.add(stu)</span><br><span class="line">        db.session.commit()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'app.stu_list'</span>))</span><br></pre></td></tr></table></figure></p>
+<p>4.批量添加学生信息<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/add_all/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_all</span><span class="params">()</span>:</span></span><br><span class="line">    stus = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">        stu = Student()</span><br><span class="line">        stu.s_name = <span class="string">'小明%s'</span> % random.randint(<span class="number">0</span>, <span class="number">10000</span>)</span><br><span class="line">        stu.s_phone = <span class="string">'12345678910'</span></span><br><span class="line">        stu.s_age = random.randint(<span class="number">18</span>, <span class="number">28</span>)</span><br><span class="line">        stus.append(stu)</span><br><span class="line">    db.session.add_all(stus)</span><br><span class="line">    db.session.commit()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'创建成功'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>六、修改数据<br>1.语法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对象 = 模型.query.filter(模型.属性名 == xxx).first()</span><br><span class="line"></span><br><span class="line">对象.属性名 = xxx</span><br></pre></td></tr></table></figure></p>
+<p>2.数据操作<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.session.commit()</span><br></pre></td></tr></table></figure></p>
+<p>3.修改学生信息<br>注意： db.session.add(stu)可以省略不写。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/edit/&lt;int:id&gt;', methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_edit</span><span class="params">(id)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        stu = Student.query.filter(Student.id == id).first()</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'add.html'</span>, stu=stu)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        username = request.form.get(<span class="string">'username'</span>)</span><br><span class="line">        phone = request.form.get(<span class="string">'phone'</span>)</span><br><span class="line">        age = request.form.get(<span class="string">'age'</span>)</span><br><span class="line">        stu = Student.query.filter(Student.id == id).first()</span><br><span class="line">        stu.s_name = username</span><br><span class="line">        stu.s_phone = phone</span><br><span class="line">        stu.s_age = age</span><br><span class="line">        <span class="comment"># db.session.add(stu)</span></span><br><span class="line">        db.session.commit()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'app.stu_list'</span>))</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>七、删除数据<br>1.语法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对象 = 模型.query.filter(模型.属性名 == xxx).first()</span><br></pre></td></tr></table></figure></p>
+<p>2.数据操作<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.session.delete(对象)</span><br><span class="line">db.session.commit()</span><br></pre></td></tr></table></figure></p>
+<p>3.删除指定id的学生<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/del/&lt;int:id&gt;/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_del</span><span class="params">(id)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="comment"># 1.获取删除的对象</span></span><br><span class="line">        stu = Student.query.filter(Student.id == id).first()</span><br><span class="line">        <span class="comment"># 2.使用delete(对象)</span></span><br><span class="line">        db.session.delete(stu)</span><br><span class="line">        db.session.commit()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'app.stu_list'</span>))</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>八、分页<br>1.分页属性<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">分页对象.items：获取数据</span><br><span class="line"></span><br><span class="line">分页对象.has_prev：是否存在上一页</span><br><span class="line"></span><br><span class="line">分页对象.prev_num：上一页脚码</span><br><span class="line"></span><br><span class="line">分页对象.has_next：是否存在下一页</span><br><span class="line"></span><br><span class="line">分页对象.next_num：下一页脚码</span><br><span class="line"></span><br><span class="line">分页对象.pages：共多少页</span><br><span class="line"></span><br><span class="line">分页对象.page：当前页</span><br><span class="line"></span><br><span class="line">分页对象.total：共多少条数据</span><br><span class="line"></span><br><span class="line">分页对象.iter_pages()：脚码</span><br></pre></td></tr></table></figure></p>
+<p>2.paginate实现分页<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/list/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stu_list</span><span class="params">()</span>:</span></span><br><span class="line">    page = int(request.args.get(<span class="string">'page'</span>, <span class="number">1</span>))</span><br><span class="line">    pre_page = <span class="number">5</span></span><br><span class="line">    paginate = Student.query.paginate(page, pre_page)</span><br><span class="line">    students = paginate.items</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'list.html'</span>, students=students, paginate=paginate)</span><br></pre></td></tr></table></figure></p>
+<p>3.list.html<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&#123;% extends <span class="string">'base.html'</span> %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block title %&#125;</span><br><span class="line">    学生列表页面</span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line">    &lt;p&gt;&lt;a href="&#123;&#123; url_for('app.stu_add') &#125;&#125;"&gt;添加学生信息&lt;/a&gt;&lt;/p&gt;</span><br><span class="line">    &lt;table&gt;</span><br><span class="line">        &lt;thead&gt;</span><br><span class="line">            &lt;th&gt;id&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;姓名&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;年龄&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;电话&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;操作&lt;/th&gt;</span><br><span class="line">        &lt;/thead&gt;</span><br><span class="line">        &lt;tbody&gt;</span><br><span class="line">            &#123;% <span class="keyword">for</span> stu <span class="keyword">in</span> students %&#125;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&#123;&#123; stu.id &#125;&#125;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&#123;&#123; stu.s_name &#125;&#125;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&#123;&#123; stu.s_age &#125;&#125;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&#123;&#123; stu.s_phone &#125;&#125;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;</span><br><span class="line">                    &lt;a href="&#123;&#123; url_for('app.stu_edit', id=stu.id) &#125;&#125;"&gt;编辑&lt;/a&gt;</span><br><span class="line">                    |</span><br><span class="line">                    &lt;a href="&#123;&#123; url_for('app.stu_del', id=stu.id) &#125;&#125;"&gt;删除&lt;/a&gt;</span><br><span class="line">                &lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &#123;% endfor %&#125;</span><br><span class="line">        &lt;/tbody&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">    &lt;p&gt;</span><br><span class="line">        &#123;% <span class="keyword">if</span> paginate.has_prev %&#125;</span><br><span class="line">            &lt;a href="&#123;&#123; url_for('app.stu_list') &#125;&#125;?page=&#123;&#123; paginate.prev_num &#125;&#125;"&gt;上一页&lt;/a&gt;</span><br><span class="line">        &#123;% endif %&#125;</span><br><span class="line"></span><br><span class="line">        &#123;% <span class="keyword">for</span> i <span class="keyword">in</span> paginate.iter_pages() %&#125;</span><br><span class="line">            &lt;a href="&#123;&#123; url_for('app.stu_list') &#125;&#125;?page=&#123;&#123; i &#125;&#125;"&gt;&#123;&#123; i &#125;&#125;&lt;/a&gt;</span><br><span class="line">        &#123;% endfor %&#125;</span><br><span class="line"></span><br><span class="line">        &#123;% <span class="keyword">if</span> paginate.has_next %&#125;</span><br><span class="line">            &lt;a href="&#123;&#123; url_for('app.stu_list') &#125;&#125;?page=&#123;&#123; paginate.next_num &#125;&#125;"&gt;下一页&lt;/a&gt;</span><br><span class="line">        &#123;% endif %&#125;</span><br><span class="line"></span><br><span class="line">        当前&#123;&#123; paginate.page &#125;&#125;页，共&#123;&#123; paginate.pages &#125;&#125;页，一共&#123;&#123; paginate.total &#125;&#125;条数据</span><br><span class="line">    &lt;/p&gt;</span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/18/day17-Flask/" class="next">Next post Flask视图和模板 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
