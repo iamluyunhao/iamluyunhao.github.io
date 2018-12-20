@@ -1,0 +1,353 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Jackhao">
+  
+  
+  
+  
+    <meta name="description" content="一、一对多模型1.查询语法123'多'的信息 = '一'的对象.rerelationship字段'一'的信息 = '多'的对象.backref字段
+2.建立模型
+注意：表的外键由db.ForeignKey指定，传入的参数是表的字段。db.relationship它声明的属性不作为表字段，第一个参数是关联类的名字，backref是一个反向身份的代理。一般情况db.relationship()会...">
+  
+  <title>Flask模型关系和钩子函数 [ Jackhao的博客 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2018/12/19/day18-Flask/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Flask模型深入
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onclick="openUserCard()">
+          <img id="avatar" src="/image/touxiang.jpg">
+          <div id="homelink">Jackhao的博客</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Flask模型关系和钩子函数</h1>
+    <p class="page-title-sub">
+      <span id="post-title-date">Created at 2018-12-20</span>
+      
+        <span id="post-title-updated">Updated at 2018-12-20</span>
+      
+      
+      
+    </p>
+    
+    <p>一、一对多模型<br>1.查询语法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'多'</span>的信息 = <span class="string">'一'</span>的对象.rerelationship字段</span><br><span class="line"></span><br><span class="line"><span class="string">'一'</span>的信息 = <span class="string">'多'</span>的对象.backref字段</span><br></pre></td></tr></table></figure></p>
+<p>2.建立模型</p>
+<p>注意：表的外键由db.ForeignKey指定，传入的参数是表的字段。db.relationship它声明的属性不作为表字段，第一个参数是关联类的名字，backref是一个反向身份的代理。一般情况db.relationship()会放在’一’这一边。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"></span><br><span class="line">db = SQLAlchemy()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 学生模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>, autoincrement=<span class="keyword">True</span>)</span><br><span class="line">    s_name = db.Column(db.String(<span class="number">20</span>), unique=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>)</span><br><span class="line">    s_phone = db.Column(db.String(<span class="number">11</span>), nullable=<span class="keyword">True</span>)</span><br><span class="line">    s_age = db.Column(db.Integer, nullable=<span class="keyword">False</span>)</span><br><span class="line">    s_gender = db.Column(db.Integer, default=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    grade_id = db.Column(db.Integer, db.ForeignKey(<span class="string">'grade.id'</span>), nullable=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 班级模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Grade</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'grade'</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>, autoincrement=<span class="keyword">True</span>)</span><br><span class="line">    g_name = db.Column(db.String(<span class="number">10</span>), unique=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>)</span><br><span class="line"></span><br><span class="line">    stus = db.relationship(<span class="string">'Student'</span>, backref=<span class="string">'g'</span>, lazy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<p>3.通过班级查询学生信息(一查多)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_stu_by_grade/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_stu_by_grade</span><span class="params">()</span>:</span></span><br><span class="line">    grade = Grade.query.filter(Grade.g_name == <span class="string">'Python'</span>).first()</span><br><span class="line">    students = grade.stus</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>4.通过学生查询班级信息(多查一)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/sel_grade_by_stu/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sel_grade_by_stu</span><span class="params">()</span>:</span></span><br><span class="line">    stu = Student.query.get(<span class="number">10</span>)</span><br><span class="line">    grade = stu.g</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'学生查询班级成功'</span></span><br></pre></td></tr></table></figure></p>
+<p>5.lazy参数</p>
+<p>lazy决定了SQLAlchemy什么时候从数据库中加载数据，有如下四个值:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">True</span>/select就是访问到属性的时候,就会全部加载该属性的数据。</span><br><span class="line"></span><br><span class="line"><span class="keyword">False</span>/joined则是在对关联的两个表进行join操作，从而获取到所有相关的对象。</span><br><span class="line"></span><br><span class="line">dynamic则不一样，在访问属性的时候，并没有在内存中加载数据，而是返回一个query对象, 需要执行相应方法才可以获取对象。</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>二、多对多模型<br>1.向中间表添加关联关系<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">方法一：</span><br><span class="line">对象<span class="number">1.</span>relationship字段.append(对象<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">方法二：</span><br><span class="line">对象<span class="number">2.</span>backrel字段.append(对象<span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<p>2.建立模型</p>
+<p>s_c表由db.Table声明，我们不需要关心这张表，因为这张表将会由SQLAlchemy接管，它唯一的作用是作为student表和course表的关联表，所以必须在db.relationship()中指出sencondary关联表参数。backref是声明反向身份代理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"></span><br><span class="line">db = SQLAlchemy()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 学生模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>, autoincrement=<span class="keyword">True</span>)</span><br><span class="line">    s_name = db.Column(db.String(<span class="number">20</span>), unique=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>)</span><br><span class="line">    s_phone = db.Column(db.String(<span class="number">11</span>), nullable=<span class="keyword">True</span>)</span><br><span class="line">    s_age = db.Column(db.Integer, nullable=<span class="keyword">False</span>)</span><br><span class="line">    s_gender = db.Column(db.Integer, default=<span class="number">1</span>)</span><br><span class="line">    grade_id = db.Column(db.Integer, db.ForeignKey(<span class="string">'grade.id'</span>), nullable=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 中间表</span></span><br><span class="line">s_c = db.Table(<span class="string">'s_c'</span>,</span><br><span class="line">               db.Column(<span class="string">'s_id'</span>, db.Integer, db.ForeignKey(<span class="string">'student.id'</span>)),</span><br><span class="line">               db.Column(<span class="string">'c_id'</span>, db.Integer, db.ForeignKey(<span class="string">'course.id'</span>))</span><br><span class="line">               )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 课程模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Course</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'course'</span></span><br><span class="line">    id = db.Column(db.Integer, primary_key=<span class="keyword">True</span>, autoincrement=<span class="keyword">True</span>)</span><br><span class="line">    c_name = db.Column(db.String(<span class="number">10</span>), unique=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>)</span><br><span class="line">    stus = db.relationship(<span class="string">'Student'</span>, secondary=s_c, backref=<span class="string">'cou'</span>)</span><br></pre></td></tr></table></figure>
+<p>3.学生添加课程<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/add_s_c/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_s_c</span><span class="params">()</span>:</span></span><br><span class="line">    stu = Student.query.get(<span class="number">3</span>)</span><br><span class="line">    course = Course.query.filter(Course.c_name == <span class="string">'线代'</span>).first()</span><br><span class="line">   	<span class="comment"># 方法一：</span></span><br><span class="line">    stu.cou.append(course)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#方法二：</span></span><br><span class="line">    course.stus.append(stu)</span><br><span class="line"></span><br><span class="line">    db.session.commit()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'添加学生课程'</span></span><br></pre></td></tr></table></figure></p>
+<p>4.删除学生课程<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.route('/del_s_c/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">del_s_c</span><span class="params">()</span>:</span></span><br><span class="line">    stu = Student.query.get(<span class="number">3</span>)</span><br><span class="line">    course = Course.query.filter(Course.c_name == <span class="string">'线代'</span>).first()</span><br><span class="line">    <span class="comment"># 方法一：</span></span><br><span class="line">    stu.cou.remove(course)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 方法二：</span></span><br><span class="line">    course.stus.remove(stu)</span><br><span class="line"></span><br><span class="line">    db.session.commit()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'删除学生课程'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>三、应用上下文和钩子函数<br>1.钩子函数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">before_request: 被装饰的函数会在每个请求被处理之前调用。</span><br><span class="line"></span><br><span class="line">after_request: 被装饰的函数会在每个请求退出时才被调用。在程序没有抛出异常的情况下，才会执行。</span><br><span class="line"></span><br><span class="line">teardown_request: 被装饰的函数会在每个请求退出时才被调用。不论程序是否抛出异常，都会执行。</span><br></pre></td></tr></table></figure></p>
+<p>2.钩子函数执行顺序<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@blue.after_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">before_req</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'请求之前执行代码'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route('/index/', methods='GET')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'我是index'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.after_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">after_req</span><span class="params">(response)</span>:</span></span><br><span class="line">    print(<span class="string">'请求之后执行的代码'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.teardown_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">teardown_req</span><span class="params">(exception)</span>:</span></span><br><span class="line">    print(<span class="string">'teardown request'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>控制台打印结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">请求之前执行代码</span><br><span class="line"></span><br><span class="line">请求之后执行的代码</span><br><span class="line"></span><br><span class="line">teardown request</span><br></pre></td></tr></table></figure></p>
+<p>从控制台的输出中可以看出各函数的执行顺序，被before_request装饰的函数会在请求处理之前被调用。而after_request和teardown_request会在请求处理完后才被调用。区别就在于after_request只会在请求正常退出的情况下才会被调用，并且atfer_request函数必须接受一个响应对象，并返回一个响应对象。而teardown_request函数在任何情况下都会被调用，并且必须传入一个参数来接收异常对象。</p>
+<p>3.应用上下文g对象<br>应用全局对象（g）是Flask为每一个请求自动建立的一个对象。g的作用范围只是在一个请求（也就是一个线程）里，它不能在多个请求中共享数据，故此应用全局变量（g）确保了线程安全。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.before_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">before_req</span><span class="params">()</span>:</span></span><br><span class="line">    conn = pymysql.Connection(host=<span class="string">'127.0.0.1'</span>, port=<span class="number">3306</span>, database=<span class="string">'flask'</span>,</span><br><span class="line">                       user=<span class="string">'root'</span>, password=<span class="string">'123456'</span>)</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置当前请求上下文中的应用全局对象</span></span><br><span class="line">    g.conn = conn</span><br><span class="line">    g.cursor = cursor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.route('/my_sel_stu/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_sel_stu</span><span class="params">()</span>:</span></span><br><span class="line">    sql = <span class="string">'select * from student;'</span></span><br><span class="line">    g.cursor.excute(sql)</span><br><span class="line">    data = g.cursor.fetchall()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'查询成功'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@blue.teardown_request</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">teardown_req</span><span class="params">(e)</span>:</span></span><br><span class="line">    g.conn.close()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> e</span><br></pre></td></tr></table></figure>
+<hr>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2018/12/19/day18-Flask/" class="next">Next post Flask模型深入 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Jackhao using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="/image/touxiang.jpg">
+    <p id="description"></p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/iamluyunhao">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/jackhao">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://weibo.com/6859208691/profile">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://www.zhihu.com/people/jackhao-26/activities">
+        
+          <i class="icon iconfont zhihu">&#xe60b;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
